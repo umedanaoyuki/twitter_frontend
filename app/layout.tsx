@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Twittwer Clone",
+  title: "「いま」を見つけよう(Clone)",
   description: "Twittwer Clone Project by Umeda03",
 };
 
