@@ -50,9 +50,9 @@ export default function Signup() {
         <div>画像</div>
         <Dialog defaultOpen={true}>
           <form>
-            <DialogContent className="sm:max-w-sm">
-              <DialogHeader>
-                <DialogTitle>Edit profile</DialogTitle>
+            <DialogContent className="sm:max-w-sm p-8">
+              <DialogHeader className="mt-8">
+                <DialogTitle>アカウントを作成</DialogTitle>
                 <DialogDescription>
                   Make changes to your profile here. Click save when you&apos;re
                   done.
