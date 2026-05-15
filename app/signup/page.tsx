@@ -53,32 +53,23 @@ export default function Signup() {
             <DialogContent className="sm:max-w-sm p-8">
               <DialogHeader className="mt-8">
                 <DialogTitle>アカウントを作成</DialogTitle>
-                <DialogDescription>
-                  Make changes to your profile here. Click save when you&apos;re
-                  done.
-                </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
-                  <Label htmlFor="name-1">Name</Label>
-                  <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="名前（英字/50文字以内）"
+                  />
                 </Field>
                 <Field>
-                  <Label htmlFor="username-1">Username</Label>
-                  <Input
-                    id="username-1"
-                    name="username"
-                    defaultValue="@peduarte"
-                  />
+                  <Input id="email" name="email" placeholder="メールアドレス" />
                 </Field>
               </FieldGroup>
               <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline" asChild>
-                    <Link href="/">Cancel</Link>
-                  </Button>
-                </DialogClose>
-                <Button type="submit">Save changes</Button>
+                <Button type="submit" className="w-full">
+                  登録する
+                </Button>
               </DialogFooter>
             </DialogContent>
           </form>
