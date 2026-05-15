@@ -1,17 +1,14 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { InputWithCharCount } from "@/components/ui/input-with-char-count";
 
 export default function Signup() {
   return (
@@ -56,9 +53,10 @@ export default function Signup() {
               </DialogHeader>
               <FieldGroup>
                 <Field>
-                  <Input
+                  <InputWithCharCount
                     id="name"
                     name="name"
+                    maxLength={50}
                     placeholder="名前（英字/50文字以内）"
                   />
                 </Field>
