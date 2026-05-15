@@ -48,7 +48,7 @@ export default function Signup() {
           </div>
         </div>
         <div>画像</div>
-        <Dialog defaultOpen>
+        <Dialog defaultOpen={true}>
           <form>
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
