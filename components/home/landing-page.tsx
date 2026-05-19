@@ -39,21 +39,6 @@ function Divider() {
 function LandingCta() {
   return (
     <div className="font-chirp flex w-full max-w-[600px] flex-col max-lg:items-center">
-      <Link
-        href="/"
-        className="mb-3 inline-flex self-start max-lg:hidden"
-        aria-label="X"
-      >
-        <Image
-          src="/images/x-logo.svg"
-          alt=""
-          width={32}
-          height={32}
-          className="size-8"
-          priority
-        />
-      </Link>
-
       <h1 className="mb-8 font-bold text-[#0f1419] max-lg:text-center max-lg:text-xl max-lg:leading-snug lg:text-[3.5rem] lg:leading-[0.9] lg:tracking-tight">
         <span className="lg:hidden">「いま」起きていることを見つけよう</span>
         <span className="hidden lg:inline">すべての話題が、ここに。</span>
@@ -133,16 +118,16 @@ function LandingPage() {
           <XHeroLogo tiny />
         </div>
 
+        {/* PC: ヒーローロゴ */}
+        <section className="hidden min-h-[45vh] flex-1 items-center justify-end pr-4 lg:flex">
+          <XHeroLogo />
+        </section>
+
         {/* CTA */}
         <section className="flex flex-1 items-center justify-center px-6 py-6 sm:px-8 lg:py-12">
           <div className="flex w-full justify-center max-lg:max-w-[400px]">
             <LandingCta />
           </div>
-        </section>
-
-        {/* PC: ヒーローロゴ */}
-        <section className="hidden min-h-[45vh] flex-1 items-center justify-end pr-4 lg:flex">
-          <XHeroLogo />
         </section>
       </main>
 
