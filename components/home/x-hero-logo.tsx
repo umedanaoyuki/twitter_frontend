@@ -23,7 +23,7 @@ function XHeroLogo({ className, tiny = false }: XHeroLogoProps) {
         xmlns="http://www.w3.org/2000/svg"
         className={cn(
           "h-auto w-full",
-          tiny ? "max-w-[140px]" : "max-w-[480px]",
+          tiny ? "max-w-[140px]" : "max-w-[308px]",
         )}
         aria-hidden
       >
