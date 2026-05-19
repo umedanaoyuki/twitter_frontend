@@ -44,9 +44,15 @@ function LandingCta() {
         <span className="hidden lg:inline">すべての話題が、ここに。</span>
       </h1>
 
+      <div className="mb-8">
+        <span className="mb-8 font-bold text-[#0f1419] max-lg:text-center max-lg:text-xl max-lg:leading-snug lg:text-[1.5rem] lg:leading-[0.9] lg:tracking-tight">
+          今すぐ参加しましょう。
+        </span>
+      </div>
+
       <div className="flex w-full max-w-[300px] flex-col max-lg:items-center">
         <SsoButton icon={<GoogleIcon className="size-5" />}>
-          Googleアカウントで登録
+          Googleで登録
         </SsoButton>
         <div className="h-3" />
         <SsoButton icon={<AppleIcon className="size-5" />}>
