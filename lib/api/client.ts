@@ -1,24 +1,7 @@
-// lib/api/client.ts
-const BASE_URL = process.env.API_BASE_URL ?? "";
+import createClient from "openapi-fetch";
 
-async function request<T>(
-  method: string,
-  path: string,
-  body?: unknown,
-): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    method,
-    headers: { "Content-Type": "application/json" },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
+import type { paths } from "./schema";
 
-  if (!res.ok) throw new Error(`API Error: ${res.status} ${path}`);
-  return res.json();
-}
+const BASE_URL = process.env.API_BASE_URL ?? "http://localhost:8080";
 
-export const apiClient = {
-  get: <T>(path: string) => request<T>("GET", path),
-  post: <T>(path: string, body: unknown) => request<T>("POST", path, body),
-  put: <T>(path: string, body: unknown) => request<T>("PUT", path, body),
-  delete: <T>(path: string) => request<T>("DELETE", path),
-};
+export const apiClient = createClient<paths>({ baseUrl: BASE_URL });

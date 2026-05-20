@@ -1,5 +1,6 @@
 "use client";
 
+import { registerAction, type RegisterState } from "@/app/signup/actions";
 import { LandingPage } from "@/components/home/landing-page";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,15 +13,21 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputWithCharCount } from "@/components/ui/input-with-char-count";
+import { useActionState } from "react";
 
 export default function Signup() {
+  const [state, formAction, pending] = useActionState<
+    RegisterState,
+    FormData
+  >(registerAction, null);
+
   return (
     <div>
       <main>
         <LandingPage />
         <Dialog defaultOpen={true}>
-          <form>
-            <DialogContent className="sm:max-w-sm p-8">
+          <DialogContent className="sm:max-w-sm p-8">
+            <form action={formAction}>
               <DialogHeader className="mt-8">
                 <DialogTitle>アカウントを作成</DialogTitle>
               </DialogHeader>
@@ -34,16 +41,37 @@ export default function Signup() {
                   />
                 </Field>
                 <Field>
-                  <Input id="email" name="email" placeholder="メールアドレス" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="メールアドレス"
+                    required
+                  />
+                </Field>
+                <Field>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="パスワード（8〜15文字）"
+                    required
+                  />
                 </Field>
               </FieldGroup>
+              {state?.error ? (
+                <p className="text-sm text-red-500">{state.error}</p>
+              ) : null}
+              {state?.success ? (
+                <p className="text-sm text-green-600">{state.message}</p>
+              ) : null}
               <DialogFooter>
-                <Button type="submit" className="w-full">
-                  登録する
+                <Button type="submit" className="w-full" disabled={pending}>
+                  {pending ? "登録中..." : "登録する"}
                 </Button>
               </DialogFooter>
-            </DialogContent>
-          </form>
+            </form>
+          </DialogContent>
         </Dialog>
       </main>
     </div>
