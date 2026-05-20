@@ -29,12 +29,12 @@ export default function Signup() {
           <DialogContent className="flex h-[50%] flex-col p-8">
             <form
               action={formAction}
-              className="flex w-full flex-1 flex-col gap-6"
+              className="flex w-full flex-1 flex-col mt-6 gap-6 sm:gap-10"
             >
               <DialogHeader>
                 <DialogTitle>アカウントを作成</DialogTitle>
               </DialogHeader>
-              <FieldGroup>
+              <FieldGroup className="gap-6 sm:gap-10">
                 <Field>
                   <InputWithCharCount
                     id="name"
