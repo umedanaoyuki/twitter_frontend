@@ -13,13 +13,25 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputWithCharCount } from "@/components/ui/input-with-char-count";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function Signup() {
   const [state, formAction, pending] = useActionState<RegisterState, FormData>(
     registerAction,
     null,
   );
+
+  useEffect(() => {
+    if (!state) return;
+    if (state.error) {
+      toast.error(state.error);
+      return;
+    }
+    if (state.success) {
+      toast.success(state.message ?? "登録が完了しました");
+    }
+  }, [state]);
 
   return (
     <div>
@@ -62,12 +74,6 @@ export default function Signup() {
                   />
                 </Field>
               </FieldGroup>
-              {state?.error ? (
-                <p className="text-sm text-red-500">{state.error}</p>
-              ) : null}
-              {state?.success ? (
-                <p className="text-sm text-green-600">{state.message}</p>
-              ) : null}
               <DialogFooter className="mt-auto w-full flex-col sm:flex-col">
                 <Button type="submit" className="w-full" disabled={pending}>
                   {pending ? "登録中..." : "登録する"}
