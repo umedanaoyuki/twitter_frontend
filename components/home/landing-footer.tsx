@@ -60,7 +60,7 @@ const footerLinks = [
 
 function LandingFooter() {
   return (
-    <footer className="font-chirp w-full px-4 py-6 text-[11px] text-[#536471]">
+    <footer className="font-chirp w-full px-4 py-6 text-[11px] text-[#71767b]">
       <nav
         className="mx-auto flex flex-wrap items-center justify-center gap-x-3 gap-y-2"
         aria-label="フッターナビゲーション"

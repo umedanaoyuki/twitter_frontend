@@ -27,10 +27,10 @@ function XHeroLogo({ className, tiny = false }: XHeroLogoProps) {
         )}
         aria-hidden
       >
-        <path d={X_PATH} fill="#000000" />
+        <path d={X_PATH} fill="#ffffff" />
         <path
           d={X_PATH}
-          stroke="#222222"
+          stroke="#2f3336"
           strokeWidth={tiny ? 6 : 3}
           strokeLinejoin="round"
         />
