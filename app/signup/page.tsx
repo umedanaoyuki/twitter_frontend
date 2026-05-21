@@ -41,6 +41,7 @@ export default function Signup() {
           <DialogContent className="flex h-[50%] flex-col p-8">
             <form
               action={formAction}
+              noValidate
               className="flex w-full flex-1 flex-col mt-6 gap-6 sm:gap-10"
             >
               <DialogHeader>
@@ -61,7 +62,6 @@ export default function Signup() {
                     name="email"
                     type="email"
                     placeholder="メールアドレス"
-                    required
                   />
                 </Field>
                 <Field>
@@ -70,7 +70,6 @@ export default function Signup() {
                     name="password"
                     type="password"
                     placeholder="パスワード（8〜15文字）"
-                    required
                   />
                 </Field>
               </FieldGroup>

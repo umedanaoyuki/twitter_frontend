@@ -42,7 +42,7 @@ const footerLinks = [
   },
   {
     label: "Xのビジネス活用",
-    href: "https://business.x.com/ja?ref=web-twc-ao-gbl-twitterforbusiness&utm_source=twc&utm_medium=web&utm_campaign=ao&utm_content=twitterforbusiness",
+    href: "https://business.x.com/ja",
   },
   {
     label: "開発者",

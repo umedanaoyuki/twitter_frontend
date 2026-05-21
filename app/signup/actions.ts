@@ -12,7 +12,6 @@ export async function registerAction(
   _prevState: RegisterState,
   formData: FormData,
 ): Promise<RegisterState> {
-  console.log("registerActionです");
   const email = formData.get("email");
   const password = formData.get("password");
 
@@ -30,7 +29,9 @@ export async function registerAction(
     });
     return {
       success: true,
-      message: response.message ?? "登録が完了しました",
+      message:
+        response.message ??
+        "メールを送信しました。アカウントを有効化してください。",
     };
   } catch (error) {
     return {
