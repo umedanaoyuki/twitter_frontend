@@ -17,14 +17,13 @@ import {
   FieldGroup,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { InputWithCharCount } from "@/components/ui/input-with-char-count";
 import {
   signupFormSchema,
   type SignupFormValues,
 } from "@/lib/validation/signup";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { startTransition, useActionState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function Signup() {
@@ -34,7 +33,6 @@ export default function Signup() {
   );
 
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors, isValid },
@@ -62,10 +60,11 @@ export default function Signup() {
 
   const onSubmit = handleSubmit((values) => {
     const formData = new FormData();
-    formData.set("name", values.name.trim());
     formData.set("email", values.email.trim());
     formData.set("password", values.password);
-    formAction(formData);
+    startTransition(() => {
+      formAction(formData);
+    });
   });
 
   return (
@@ -73,7 +72,10 @@ export default function Signup() {
       <main>
         <LandingPage />
         <Dialog defaultOpen={true}>
-          <DialogContent className="flex h-[50%] flex-col p-8">
+          <DialogContent
+            className="flex h-[70%] flex-col p-8 lg:h-[50%]"
+            showCloseButton={false}
+          >
             <form
               onSubmit={onSubmit}
               noValidate
@@ -83,22 +85,6 @@ export default function Signup() {
                 <DialogTitle>アカウントを作成</DialogTitle>
               </DialogHeader>
               <FieldGroup className="gap-6 sm:gap-10">
-                <Controller
-                  name="name"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid || undefined}>
-                      <InputWithCharCount
-                        {...field}
-                        id="name"
-                        maxLength={50}
-                        placeholder="名前（英字/50文字以内）"
-                        aria-invalid={fieldState.invalid}
-                      />
-                      <FieldError errors={[fieldState.error]} />
-                    </Field>
-                  )}
-                />
                 <Field data-invalid={errors.email ? true : undefined}>
                   <Input
                     id="email"
