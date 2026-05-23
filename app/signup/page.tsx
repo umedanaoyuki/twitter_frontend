@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -83,6 +84,9 @@ export default function Signup() {
             >
               <DialogHeader>
                 <DialogTitle>アカウントを作成</DialogTitle>
+                <DialogDescription>
+                  メールアドレスとパスワードを入力して登録してください。
+                </DialogDescription>
               </DialogHeader>
               <FieldGroup className="gap-6 sm:gap-10">
                 <Field data-invalid={errors.email ? true : undefined}>
