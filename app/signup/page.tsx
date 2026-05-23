@@ -17,6 +17,7 @@ import {
   FieldGroup,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   signupFormSchema,
   type SignupFormValues,
@@ -95,9 +96,8 @@ export default function Signup() {
                   <FieldError errors={[errors.email]} />
                 </Field>
                 <Field data-invalid={errors.password ? true : undefined}>
-                  <Input
+                  <PasswordInput
                     id="password"
-                    type="password"
                     placeholder="パスワード(例: Password1!)"
                     aria-invalid={!!errors.password}
                     {...register("password")}
