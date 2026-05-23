@@ -51,19 +51,12 @@ export default function Signup() {
 
   useEffect(() => {
     if (!state) return;
-    if (state.error) {
+    if ("error" in state) {
       toast.error(state.error);
       return;
     }
-    if (state.success) {
-      toast.success(
-        <ToastMessage
-          message={
-            state.message ??
-            "メールを送信しました。\nアカウントを有効化してください。"
-          }
-        />,
-      );
+    if ("success" in state) {
+      toast.success(<ToastMessage message={state.message} />);
     }
   }, [state]);
 

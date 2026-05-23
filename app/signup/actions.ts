@@ -2,11 +2,10 @@
 
 import { register } from "@/lib/api/auth";
 
-export type RegisterState = {
-  error?: string;
-  success?: boolean;
-  message?: string;
-} | null;
+export type RegisterState =
+  | { error: string }
+  | { success: true; message: string }
+  | null;
 
 export async function registerAction(
   _prevState: RegisterState,
@@ -27,11 +26,15 @@ export async function registerAction(
       email: email.trim(),
       password,
     });
+
+    const message = response.message;
+
+    if (!message) {
+      return { error: "登録に失敗しました" };
+    }
     return {
       success: true,
-      message:
-        response.message ??
-        "メールを送信しました。アカウントを有効化してください。",
+      message,
     };
   } catch (error) {
     return {
