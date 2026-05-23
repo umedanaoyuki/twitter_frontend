@@ -143,3 +143,21 @@ body {
     @apply bg-background text-foreground;}
   html {
     @apply font-sans;}}
+
+/* SP: toast を画面上部中央に固定（Sonner の 600px 以下スタイルを上書き） */
+@media (max-width: 1023px) {
+  [data-sonner-toaster] {
+    top: max(1rem, env(safe-area-inset-top, 0px)) !important;
+    bottom: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: min(calc(100vw - 2rem), var(--width, 356px)) !important;
+  }
+
+  [data-sonner-toaster] [data-sonner-toast] {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+  }
+}
