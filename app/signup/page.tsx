@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { ToastMessage } from "@/lib/toast-message";
 import {
   signupFormSchema,
   type SignupFormValues,
@@ -55,7 +56,14 @@ export default function Signup() {
       return;
     }
     if (state.success) {
-      toast.success(state.message ?? "登録が完了しました");
+      toast.success(
+        <ToastMessage
+          message={
+            state.message ??
+            "メールを送信しました。\nアカウントを有効化してください。"
+          }
+        />,
+      );
     }
   }, [state]);
 
