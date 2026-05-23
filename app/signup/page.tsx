@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { ToastMessage } from "@/lib/toast-message";
+import { ToastMessage } from "@/components/utils/toast-message";
 import {
   signupFormSchema,
   type SignupFormValues,
