@@ -1,6 +1,11 @@
 import { z } from "zod";
 
 const PASSWORD_CHARS_PATTERN = /^[a-zA-Z0-9!?_-]+$/;
+const PASSWORD_SYMBOLS = "!?-_";
+
+function hasPasswordSymbol(password: string): boolean {
+  return [...password].some((char) => PASSWORD_SYMBOLS.includes(char));
+}
 
 export const signupFormSchema = z.object({
   email: z
@@ -51,7 +56,7 @@ export const signupFormSchema = z.object({
       });
       return;
     }
-    if (!/[!?-_]/.test(password)) {
+    if (!hasPasswordSymbol(password)) {
       ctx.addIssue({
         code: "custom",
         message: "パスワードには記号(!?-_)を1文字以上含める必要があります",
