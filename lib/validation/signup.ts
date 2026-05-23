@@ -3,12 +3,6 @@ import { z } from "zod";
 const PASSWORD_CHARS_PATTERN = /^[a-zA-Z0-9!?_-]+$/;
 
 export const signupFormSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "名前を入力してください")
-    .max(50, "名前は50文字以内で入力してください")
-    .regex(/^[a-zA-Z]+$/, "名前は英字のみ使用できます"),
   email: z
     .string()
     .trim()

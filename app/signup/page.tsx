@@ -41,7 +41,6 @@ export default function Signup() {
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
