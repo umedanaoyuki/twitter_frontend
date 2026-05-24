@@ -76,7 +76,7 @@ export default function Signup() {
         <Dialog defaultOpen={true}>
           <DialogContent
             className="flex h-[70%] flex-col p-8 lg:h-[50%]"
-            showCloseButton={false}
+            onPointerDownOutside={(e) => e.preventDefault()}
           >
             <form
               onSubmit={onSubmit}
