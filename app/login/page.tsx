@@ -25,8 +25,10 @@ import { useForm } from "react-hook-form";
 import { loginAction } from "./action";
 import { toast } from "sonner";
 import { ToastMessage } from "@/components/utils/toast-message";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -52,6 +54,8 @@ export default function Login() {
         return;
       }
       toast.success(<ToastMessage message={result.message} />);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      router.push("/setting");
     });
   });
   return (
