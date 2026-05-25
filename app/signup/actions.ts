@@ -12,7 +12,7 @@ export type RegisterState =
 export const createRegisterAction = actionClient
   .schema(signupFormSchema)
   .action(async ({ parsedInput: values }) => {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     try {
       const response = await register({
         email: values.email.trim(),
