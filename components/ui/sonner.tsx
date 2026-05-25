@@ -1,28 +1,34 @@
-"use client"
+"use client";
 
-import { useSyncExternalStore } from "react"
-import { useTheme } from "next-themes"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon, InformationCircleIcon, Alert02Icon, MultiplicationSignCircleIcon, Loading03Icon } from "@hugeicons/core-free-icons"
+import { useSyncExternalStore } from "react";
+import { useTheme } from "next-themes";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckmarkCircle02Icon,
+  InformationCircleIcon,
+  Alert02Icon,
+  MultiplicationSignCircleIcon,
+  Loading03Icon,
+} from "@hugeicons/core-free-icons";
 
-const DESKTOP_MEDIA_QUERY = "(min-width: 1024px)"
+const DESKTOP_MEDIA_QUERY = "(min-width: 1024px)";
 
 function useIsDesktop() {
   return useSyncExternalStore(
     (onStoreChange) => {
-      const mediaQuery = window.matchMedia(DESKTOP_MEDIA_QUERY)
-      mediaQuery.addEventListener("change", onStoreChange)
-      return () => mediaQuery.removeEventListener("change", onStoreChange)
+      const mediaQuery = window.matchMedia(DESKTOP_MEDIA_QUERY);
+      mediaQuery.addEventListener("change", onStoreChange);
+      return () => mediaQuery.removeEventListener("change", onStoreChange);
     },
     () => window.matchMedia(DESKTOP_MEDIA_QUERY).matches,
     () => false,
-  )
+  );
 }
 
 const MOBILE_TOAST_OFFSET = {
   top: "max(1rem, env(safe-area-inset-top, 0px))",
-} as const
+} as const;
 
 const Toaster = ({
   position: positionProp,
@@ -30,10 +36,9 @@ const Toaster = ({
   mobileOffset,
   ...props
 }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
-  const isDesktop = useIsDesktop()
-  const position =
-    positionProp ?? (isDesktop ? "bottom-right" : "top-center")
+  const { theme = "system" } = useTheme();
+  const isDesktop = useIsDesktop();
+  const position = positionProp ?? (isDesktop ? "bottom-right" : "top-center");
 
   return (
     <Sonner
@@ -44,19 +49,39 @@ const Toaster = ({
       mobileOffset={mobileOffset ?? MOBILE_TOAST_OFFSET}
       icons={{
         success: (
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={CheckmarkCircle02Icon}
+            strokeWidth={2}
+            className="size-4"
+          />
         ),
         info: (
-          <HugeiconsIcon icon={InformationCircleIcon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={InformationCircleIcon}
+            strokeWidth={2}
+            className="size-4"
+          />
         ),
         warning: (
-          <HugeiconsIcon icon={Alert02Icon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={Alert02Icon}
+            strokeWidth={2}
+            className="size-4"
+          />
         ),
         error: (
-          <HugeiconsIcon icon={MultiplicationSignCircleIcon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={MultiplicationSignCircleIcon}
+            strokeWidth={2}
+            className="size-4"
+          />
         ),
         loading: (
-          <HugeiconsIcon icon={Loading03Icon} strokeWidth={2} className="size-4 animate-spin" />
+          <HugeiconsIcon
+            icon={Loading03Icon}
+            strokeWidth={2}
+            className="size-4 animate-spin"
+          />
         ),
       }}
       style={
@@ -75,7 +100,7 @@ const Toaster = ({
       {...props}
       position={position}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };
