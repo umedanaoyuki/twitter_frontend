@@ -62,7 +62,7 @@ export default function Signup() {
 
   const onSubmit = handleSubmit((values) => {
     const formData = new FormData();
-    formData.set("email", values.email.trim());
+    formData.set("email", values.email);
     formData.set("password", values.password);
     startTransition(() => {
       formAction(formData);
