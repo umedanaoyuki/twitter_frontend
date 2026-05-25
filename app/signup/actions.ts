@@ -1,6 +1,7 @@
 "use server";
 
 import { register } from "@/lib/api/auth";
+import type { SignupFormValues } from "@/lib/validation/signup";
 
 export type RegisterState =
   | { error: string }
@@ -8,23 +9,12 @@ export type RegisterState =
   | null;
 
 export async function registerAction(
-  _prevState: RegisterState,
-  formData: FormData,
+  values: SignupFormValues,
 ): Promise<RegisterState> {
-  const email = formData.get("email");
-  const password = formData.get("password");
-
-  if (typeof email !== "string" || !email.trim()) {
-    return { error: "メールアドレスを入力してください" };
-  }
-  if (typeof password !== "string" || !password) {
-    return { error: "パスワードを入力してください" };
-  }
-
   try {
     const response = await register({
-      email: email.trim(),
-      password,
+      email: values.email.trim(),
+      password: values.password,
     });
 
     const message = response.message;

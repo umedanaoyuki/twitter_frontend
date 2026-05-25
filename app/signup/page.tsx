@@ -1,6 +1,6 @@
 "use client";
 
-import { registerAction, type RegisterState } from "@/app/signup/actions";
+import { registerAction } from "@/app/signup/actions";
 import { LandingPage } from "@/components/home/landing-page";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,15 +25,12 @@ import {
   type SignupFormValues,
 } from "@/lib/validation/signup";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { startTransition, useActionState, useEffect } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function Signup() {
-  const [state, formAction, pending] = useActionState<RegisterState, FormData>(
-    registerAction,
-    null,
-  );
+  const [isPending, startTransition] = useTransition();
 
   const {
     register,
@@ -49,23 +46,15 @@ export default function Signup() {
     },
   });
 
-  useEffect(() => {
-    if (!state) return;
-    if ("error" in state) {
-      toast.error(state.error);
-      return;
-    }
-    if ("success" in state) {
-      toast.success(<ToastMessage message={state.message} />);
-    }
-  }, [state]);
-
   const onSubmit = handleSubmit((values) => {
-    const formData = new FormData();
-    formData.set("email", values.email);
-    formData.set("password", values.password);
-    startTransition(() => {
-      formAction(formData);
+    startTransition(async () => {
+      const result = await registerAction(values);
+      if (!result) return;
+      if ("error" in result) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success(<ToastMessage message={result.message} />);
     });
   });
 
@@ -117,9 +106,9 @@ export default function Signup() {
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={pending || !isValid}
+                  disabled={isPending || !isValid}
                 >
-                  {pending ? "登録中..." : "登録する"}
+                  {isPending ? "登録中..." : "登録する"}
                 </Button>
               </DialogFooter>
             </form>
