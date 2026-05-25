@@ -22,13 +22,10 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { ToastMessage } from "@/components/utils/toast-message";
 import { signupFormSchema } from "@/lib/validation/signup";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition } from "react";
 import { toast } from "sonner";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 
 export default function Signup() {
-  // const [isPending, startTransition] = useTransition();
-
   const { form, action, handleSubmitWithAction } = useHookFormAction(
     createRegisterAction,
     zodResolver(signupFormSchema),
@@ -58,18 +55,6 @@ export default function Signup() {
     register,
     formState: { errors, isValid },
   } = form;
-
-  // const onSubmit = handleSubmit((values) => {
-  //   startTransition(async () => {
-  //     const result = await createRegisterAction(values);
-  //     if (!result) return;
-  //     if ("error" in result) {
-  //       toast.error(result.error);
-  //       return;
-  //     }
-  //     toast.success(<ToastMessage message={result.message} />);
-  //   });
-  // });
 
   return (
     <div>
