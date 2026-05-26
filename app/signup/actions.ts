@@ -15,7 +15,7 @@ export const createRegisterAction = actionClient
     await new Promise((resolve) => setTimeout(resolve, 2000));
     try {
       const response = await register({
-        email: values.email.trim(),
+        email: values.email,
         password: values.password,
       });
 
