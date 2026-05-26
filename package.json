@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:e2e": "playwright test",
     "prepare": "husky",
     "openapi:sync": "cp ../golang_twitter/docs/swagger.json ./openapi/swagger.json",
     "openapi:convert": "swagger2openapi ./openapi/swagger.json -o ./openapi/openapi.json",
@@ -37,6 +38,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
