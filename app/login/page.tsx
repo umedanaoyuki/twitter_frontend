@@ -55,7 +55,7 @@ export default function Login() {
       }
       toast.success(<ToastMessage message={result.message} />);
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      router.push("/setting");
+      router.push("/home");
     });
   });
   return (
