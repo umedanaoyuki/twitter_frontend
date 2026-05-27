@@ -1,34 +1,36 @@
 "use server";
 
 import { register } from "@/lib/api/auth";
-import type { SignupFormValues } from "@/lib/validation/signup";
+import { actionClient } from "@/lib/safe-action";
+import { signupFormSchema } from "@/lib/validation/signup";
 
 export type RegisterState =
   | { error: string }
   | { success: true; message: string }
   | null;
 
-export async function registerAction(
-  values: SignupFormValues,
-): Promise<RegisterState> {
-  try {
-    const response = await register({
-      email: values.email,
-      password: values.password,
-    });
+export const createRegisterAction = actionClient
+  .schema(signupFormSchema)
+  .action(async ({ parsedInput: values }) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const response = await register({
+        email: values.email,
+        password: values.password,
+      });
 
-    const message = response.message;
+      const message = response.message;
 
-    if (!message) {
-      return { error: "登録に失敗しました" };
+      if (!message) {
+        return { error: "登録に失敗しました" };
+      }
+      return {
+        success: true,
+        message,
+      };
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : "登録に失敗しました",
+      };
     }
-    return {
-      success: true,
-      message,
-    };
-  } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : "登録に失敗しました",
-    };
-  }
-}
+  });
