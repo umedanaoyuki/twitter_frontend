@@ -23,7 +23,12 @@ export async function register(
   return data;
 }
 
-export async function login(input: LoginInput): Promise<LoginResponse> {
+export type LoginResult = {
+  data: LoginResponse;
+  setCookieHeaders: string[];
+};
+
+export async function login(input: LoginInput): Promise<LoginResult> {
   const { data, error, response } = await apiClient.POST("/login", {
     body: input,
   });
@@ -32,5 +37,8 @@ export async function login(input: LoginInput): Promise<LoginResponse> {
     throw new Error(getApiErrorMessage(error, response.status));
   }
 
-  return data;
+  return {
+    data,
+    setCookieHeaders: response.headers.getSetCookie(),
+  };
 }

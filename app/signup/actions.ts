@@ -13,7 +13,7 @@ export async function registerAction(
 ): Promise<RegisterState> {
   try {
     const response = await register({
-      email: values.email.trim(),
+      email: values.email,
       password: values.password,
     });
 
