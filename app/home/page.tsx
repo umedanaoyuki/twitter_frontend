@@ -1,7 +1,5 @@
+import { HomeTimeline } from "@/components/home/home-timeline";
+
 export default function Home() {
-  return (
-    <div>
-      <h1>Home</h1>
-    </div>
-  );
+  return <HomeTimeline />;
 }
