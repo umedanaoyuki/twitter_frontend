@@ -1,6 +1,6 @@
 "use client";
 
-import { registerAction } from "@/app/signup/actions";
+import { createRegisterAction } from "@/app/signup/actions";
 import { LandingPage } from "@/components/home/landing-page";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,43 +20,41 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { ToastMessage } from "@/components/utils/toast-message";
-import {
-  signupFormSchema,
-  type SignupFormValues,
-} from "@/lib/validation/signup";
+import { signupFormSchema } from "@/lib/validation/signup";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition } from "react";
-import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 
 export default function Signup() {
-  const [isPending, startTransition] = useTransition();
+  const { form, action, handleSubmitWithAction } = useHookFormAction(
+    createRegisterAction,
+    zodResolver(signupFormSchema),
+    {
+      formProps: {
+        mode: "onChange",
+        reValidateMode: "onChange",
+        defaultValues: {
+          email: "",
+          password: "",
+        },
+      },
+      actionProps: {
+        onSuccess: (data) => {
+          if (data.data == null) return;
+          if ("error" in data.data) {
+            toast.error(data.data.error);
+            return;
+          }
+          toast.success(<ToastMessage message={data.data.message} />);
+        },
+      },
+    },
+  );
 
   const {
     register,
-    handleSubmit,
     formState: { errors, isValid },
-  } = useForm<SignupFormValues>({
-    resolver: zodResolver(signupFormSchema),
-    mode: "onChange",
-    reValidateMode: "onChange",
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = handleSubmit((values) => {
-    startTransition(async () => {
-      const result = await registerAction(values);
-      if (!result) return;
-      if ("error" in result) {
-        toast.error(result.error);
-        return;
-      }
-      toast.success(<ToastMessage message={result.message} />);
-    });
-  });
+  } = form;
 
   return (
     <div>
@@ -68,7 +66,7 @@ export default function Signup() {
             onPointerDownOutside={(e) => e.preventDefault()}
           >
             <form
-              onSubmit={onSubmit}
+              onSubmit={handleSubmitWithAction}
               noValidate
               className="mt-6 flex w-full flex-1 flex-col gap-6 sm:gap-10"
             >
@@ -106,9 +104,9 @@ export default function Signup() {
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={isPending || !isValid}
+                  disabled={action.isPending || !isValid}
                 >
-                  {isPending ? "登録中..." : "登録する"}
+                  {action.isPending ? "登録中..." : "登録する"}
                 </Button>
               </DialogFooter>
             </form>

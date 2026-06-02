@@ -24,7 +24,7 @@ const PasswordInput = React.forwardRef<
       <button
         type="button"
         tabIndex={-1}
-        className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
         onClick={() => setShowPassword((visible) => !visible)}
         aria-label={showPassword ? "パスワードを隠す" : "パスワードを表示"}
       >

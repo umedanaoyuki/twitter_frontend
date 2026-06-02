@@ -64,5 +64,3 @@ export const signupFormSchema = z.object({
     }
   }),
 });
-
-export type SignupFormValues = z.infer<typeof signupFormSchema>;
