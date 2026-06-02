@@ -14,7 +14,7 @@ type SetCookieFn = (
   },
 ) => void;
 
-/** Gin が返す Set-Cookie をブラウザ用 Cookie に反映する */
+/** Gin がNext.jsのサーバーに返してきた Set-Cookie をブラウザ用 Cookie に反映する処理 */
 export function applySessionCookies(
   setCookieHeaders: string[],
   setCookie: SetCookieFn,
