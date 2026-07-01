@@ -46,7 +46,10 @@ function ComposeTweet() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    clearImage();
+    if (imagePreviewUrl) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
     setSelectedImage(file);
     setImagePreviewUrl(URL.createObjectURL(file));
     setContent("");
@@ -61,9 +64,14 @@ function ComposeTweet() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!formRef.current || !canSubmit) return;
+    if (!canSubmit) return;
 
-    const formData = new FormData(formRef.current);
+    const formData = new FormData();
+    formData.set("content", content);
+    if (selectedImage) {
+      formData.set("image", selectedImage);
+    }
+
     startTransition(async () => {
       const result = await postTweetAction(formData);
       if (!result) return;
