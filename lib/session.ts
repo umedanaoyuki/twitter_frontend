@@ -22,14 +22,14 @@ export async function getCurrentUserId(): Promise<number | null> {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-export async function requireCurrentUserId(): Promise<number> {
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw new Error("ログインが必要です");
-  }
+// export async function requireCurrentUserId(): Promise<number> {
+//   const userId = await getCurrentUserId();
+//   if (!userId) {
+//     throw new Error("ログインが必要です");
+//   }
 
-  return userId;
-}
+//   return userId;
+// }
 
 export async function requireSessionCookieHeader(): Promise<string> {
   const cookieHeader = await getSessionCookieHeader();
@@ -81,4 +81,3 @@ export function applySessionCookies(
     setCookie(name, decodeURIComponent(value), options);
   }
 }
-
