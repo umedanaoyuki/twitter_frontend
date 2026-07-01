@@ -1,20 +1,6 @@
-export type Tweet = {
-  id: string;
-  author: {
-    name: string;
-    handle: string;
-    avatarUrl?: string;
-    verified?: boolean;
-  };
-  content: string;
-  timestamp: string;
-  stats: {
-    replies: string;
-    reposts: string;
-    likes: string;
-    views: string;
-  };
-};
+import type { Tweet } from "@/lib/types/tweet";
+
+export type { Tweet };
 
 export const mockTweets: Tweet[] = [
   {
@@ -27,6 +13,7 @@ export const mockTweets: Tweet[] = [
     content:
       "App Router でホームタイムラインの UI を組み立てるのは、3カラムレイアウトから始めるのがおすすめです。",
     timestamp: "2時間",
+    createdAt: "2026-07-01T10:00:00.000Z",
     stats: {
       replies: "24",
       reposts: "128",
@@ -43,6 +30,7 @@ export const mockTweets: Tweet[] = [
     content:
       "Twitter クローンのホーム画面、マークアップだけ先に作ってから API 連携する進め方にしました。",
     timestamp: "5時間",
+    createdAt: "2026-07-01T07:00:00.000Z",
     stats: {
       replies: "3",
       reposts: "12",
@@ -59,6 +47,7 @@ export const mockTweets: Tweet[] = [
     content:
       "ダークテーマでは境界線よりも背景のコントラスト差でセクションを分けると、X に近い見た目になります。",
     timestamp: "1日前",
+    createdAt: "2026-06-30T12:00:00.000Z",
     stats: {
       replies: "41",
       reposts: "256",

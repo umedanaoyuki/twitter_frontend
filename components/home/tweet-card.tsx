@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Tweet } from "@/lib/mock/home-feed";
+import type { Tweet } from "@/lib/types/tweet";
 
 type TweetCardProps = {
   tweet: Tweet;
@@ -30,7 +30,7 @@ function TweetAction({
 }
 
 function TweetCard({ tweet }: TweetCardProps) {
-  const { author, content, timestamp, stats } = tweet;
+  const { author, content, imageUrl, timestamp, createdAt, stats } = tweet;
 
   return (
     <article className="border-b border-[#2f3336] px-4 py-3 transition-colors hover:bg-[#080808]">
@@ -62,7 +62,7 @@ function TweetCard({ tweet }: TweetCardProps) {
               )}
               <span className="truncate text-[#71767b]">@{author.handle}</span>
               <span className="text-[#71767b]">·</span>
-              <time className="text-[#71767b]" dateTime={timestamp}>
+              <time className="text-[#71767b]" dateTime={createdAt}>
                 {timestamp}
               </time>
             </div>
@@ -72,34 +72,73 @@ function TweetCard({ tweet }: TweetCardProps) {
               aria-label="ポストのその他の操作"
               className="flex size-[34px] shrink-0 items-center justify-center rounded-full text-[#71767b] transition-colors hover:bg-[#1d9bf0]/10 hover:text-[#1d9bf0]"
             >
-              <svg viewBox="0 0 24 24" aria-hidden className="size-5 fill-current">
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className="size-5 fill-current"
+              >
                 <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm9-2c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z" />
               </svg>
             </button>
           </div>
 
-          <p className="mt-1 break-words whitespace-pre-wrap text-[15px] leading-snug text-[#e7e9ea]">
-            {content}
-          </p>
+          {content ? (
+            <p className="mt-1 text-[15px] leading-snug wrap-break-word whitespace-pre-wrap text-[#e7e9ea]">
+              {content}
+            </p>
+          ) : null}
+
+          {imageUrl ? (
+            <div className="mt-3 overflow-hidden rounded-2xl border border-[#2f3336]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl}
+                alt="投稿画像"
+                className="max-h-96 w-full object-cover"
+              />
+            </div>
+          ) : null}
 
           <div className="mt-3 flex max-w-[425px] justify-between text-[#71767b]">
-            <TweetAction label={`返信 ${stats.replies}件`} count={stats.replies}>
-              <svg viewBox="0 0 24 24" aria-hidden className="size-[18px] fill-current">
+            <TweetAction
+              label={`返信 ${stats.replies}件`}
+              count={stats.replies}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className="size-[18px] fill-current"
+              >
                 <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6.5c-3.584 0-6.5 2.916-6.5 6.5s2.916 6.5 6.5 6.5h.177l-.021.01v3.59l5.907-3.27c2.178-1.209 3.544-3.488 3.544-5.93 0-3.582-2.916-6.5-6.5-6.5-3.582 0-6.5 2.918-6.5 6.5z" />
               </svg>
             </TweetAction>
-            <TweetAction label={`リポスト ${stats.reposts}件`} count={stats.reposts}>
-              <svg viewBox="0 0 24 24" aria-hidden className="size-[18px] fill-current">
+            <TweetAction
+              label={`リポスト ${stats.reposts}件`}
+              count={stats.reposts}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className="size-[18px] fill-current"
+              >
                 <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zm15 12.12l-4.432-4.14 1.364-1.46L18.5 16.45V8c0-1.1-.896-2-2-2H11V4h5.5c2.209 0 4 1.79 4 4v8.45l3.068-1.93 1.364 1.46-4.432 4.14z" />
               </svg>
             </TweetAction>
             <TweetAction label={`いいね ${stats.likes}件`} count={stats.likes}>
-              <svg viewBox="0 0 24 24" aria-hidden className="size-[18px] fill-current">
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className="size-[18px] fill-current"
+              >
                 <path d="M16.697 3.48c-1.936 0-3.616 1.04-4.865 2.55C10.583 4.52 8.903 3.48 6.967 3.48c-2.776 0-5.027 2.25-5.027 5.027 0 5.75 9.188 11.727 9.188 11.727s9.188-5.977 9.188-11.727c0-2.777-2.251-5.027-5.027-5.027z" />
               </svg>
             </TweetAction>
             <TweetAction label={`表示 ${stats.views}回`} count={stats.views}>
-              <svg viewBox="0 0 24 24" aria-hidden className="size-[18px] fill-current">
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className="size-[18px] fill-current"
+              >
                 <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21v-4h2v4H4zm12.5 0V11h2v10h-2z" />
               </svg>
             </TweetAction>
@@ -108,7 +147,11 @@ function TweetCard({ tweet }: TweetCardProps) {
               aria-label="共有"
               className="flex size-[34px] items-center justify-center rounded-full text-[#71767b] transition-colors hover:bg-[#1d9bf0]/10 hover:text-[#1d9bf0]"
             >
-              <svg viewBox="0 0 24 24" aria-hidden className="size-[18px] fill-current">
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className="size-[18px] fill-current"
+              >
                 <path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21.5 3 20.38 3 19V15h2v4c0 .28.22.5.5.5h13c.27 0 .5-.22.5-.5V15h2z" />
               </svg>
             </button>
