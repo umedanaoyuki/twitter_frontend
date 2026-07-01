@@ -11,6 +11,7 @@ import {
   UserIcon,
 } from "@/components/home/home-nav-icons";
 import { XLogoMark } from "@/components/home/x-logo-mark";
+import type { CurrentUser } from "@/lib/types/user";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -18,6 +19,10 @@ type NavItem = {
   href: string;
   icon: ReactNode;
   active?: boolean;
+};
+
+type HomeSidebarProps = {
+  currentUser: CurrentUser | null;
 };
 
 const navItems: NavItem[] = [
@@ -29,10 +34,13 @@ const navItems: NavItem[] = [
   { label: "プロフィール", href: "#", icon: <UserIcon /> },
 ];
 
-function HomeSidebar() {
+function HomeSidebar({ currentUser }: HomeSidebarProps) {
+  const displayName = currentUser?.name ?? "ユーザー";
+  const handle = currentUser?.handle ?? "user";
+
   return (
-    <header className="font-chirp sticky top-0 flex h-dvh flex-col px-3">
-      <div className="flex flex-1 flex-col">
+    <aside className="font-chirp flex h-dvh flex-col px-3">
+      <div className="flex flex-col">
         <Link
           href="/home"
           className="mb-1 flex w-fit rounded-full p-3 transition-colors hover:bg-[#181818]"
@@ -71,7 +79,7 @@ function HomeSidebar() {
 
       <button
         type="button"
-        className="mb-3 flex w-full max-w-[234px] items-center gap-3 rounded-full p-3 transition-colors hover:bg-[#181818]"
+        className="mt-auto mb-3 flex w-full max-w-[234px] shrink-0 items-center gap-3 rounded-full p-3 transition-colors hover:bg-[#181818]"
       >
         <span
           className="size-10 shrink-0 rounded-full bg-[#536471]"
@@ -79,15 +87,15 @@ function HomeSidebar() {
         />
         <span className="min-w-0 flex-1 text-left">
           <span className="block truncate text-[15px] font-bold text-[#e7e9ea]">
-            ユーザー
+            {displayName}
           </span>
           <span className="block truncate text-[15px] text-[#71767b]">
-            @user
+            @{handle}
           </span>
         </span>
         <MoreIcon className="shrink-0 text-[#e7e9ea]" />
       </button>
-    </header>
+    </aside>
   );
 }
 
