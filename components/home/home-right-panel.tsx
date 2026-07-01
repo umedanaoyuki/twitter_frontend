@@ -1,4 +1,4 @@
-import { mockSuggestions, mockTrends } from "@/lib/mock/home-feed";
+import { mockSuggestions } from "@/lib/mock/home-feed";
 
 function HomeRightPanel() {
   return (
