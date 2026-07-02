@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { loadMoreTweetsAction } from "@/app/home/action";
 import { TweetCard } from "@/components/home/tweet-card";
 import type { Tweet, TweetTimelineData } from "@/lib/types/tweet";
+
+const LOADING_INDICATOR_DELAY_MS = 400;
 
 function TweetTimeline({
   tweets: initialTweets,
@@ -15,27 +17,60 @@ function TweetTimeline({
   const [extraTweets, setExtraTweets] = useState<Tweet[]>([]);
   const [extraHasMore, setExtraHasMore] = useState<boolean | null>(null);
   const [extraNextCursor, setExtraNextCursor] = useState<number | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const isLoadingRef = useRef(false);
 
   const tweets = [...initialTweets, ...extraTweets];
   const hasMore = extraHasMore ?? initialHasMore;
   const nextCursor = extraNextCursor ?? initialNextCursor;
 
-  function handleLoadMore() {
-    if (!nextCursor) return;
+  const handleLoadMore = useCallback(() => {
+    if (!nextCursor || isLoadingRef.current) return;
 
-    startTransition(async () => {
-      const result = await loadMoreTweetsAction(nextCursor);
-      if ("error" in result) {
-        toast.error(result.error);
-        return;
+    isLoadingRef.current = true;
+
+    void (async () => {
+      try {
+        await new Promise((resolve) =>
+          setTimeout(resolve, LOADING_INDICATOR_DELAY_MS),
+        );
+        setIsLoading(true);
+
+        const result = await loadMoreTweetsAction(nextCursor);
+        if ("error" in result) {
+          toast.error(result.error);
+          return;
+        }
+
+        setExtraTweets((current) => [...current, ...result.tweets]);
+        setExtraHasMore(result.hasMore);
+        setExtraNextCursor(result.nextCursor);
+      } finally {
+        isLoadingRef.current = false;
+        setIsLoading(false);
       }
+    })();
+  }, [nextCursor]);
 
-      setExtraTweets((current) => [...current, ...result.tweets]);
-      setExtraHasMore(result.hasMore);
-      setExtraNextCursor(result.nextCursor);
-    });
-  }
+  useEffect(() => {
+    if (!hasMore || nextCursor == null) return;
+
+    const target = loadMoreRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          handleLoadMore();
+        }
+      },
+      { rootMargin: "1px" },
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasMore, nextCursor, handleLoadMore]);
 
   if (tweets.length === 0) {
     return (
@@ -51,15 +86,14 @@ function TweetTimeline({
         <TweetCard key={tweet.id} tweet={tweet} />
       ))}
       {hasMore && nextCursor !== null && (
-        <div className="border-b border-[#2f3336] px-4 py-4">
-          <button
-            type="button"
-            onClick={handleLoadMore}
-            disabled={isPending}
-            className="w-full rounded-full border border-[#536471] px-4 py-2 text-[15px] font-bold text-[#1d9bf0] transition-colors hover:bg-[#1d9bf0]/10 disabled:opacity-50"
-          >
-            {isPending ? "読み込み中..." : "もっと見る"}
-          </button>
+        <div
+          ref={loadMoreRef}
+          className="border-b border-[#2f3336] px-4 py-4 text-center"
+          aria-live="polite"
+        >
+          <p className="text-[15px] font-bold text-[#1d9bf0]">
+            {isLoading ? "読み込み中..." : "もっと見る"}
+          </p>
         </div>
       )}
     </>
