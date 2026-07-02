@@ -1,13 +1,11 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-import {
-  BellIcon,
-  HomeIcon,
-  MailIcon,
-  SearchIcon,
-  UserIcon,
-} from "@/components/home/home-nav-icons";
+import { IoHomeOutline } from "react-icons/io5";
+import { HiSearch } from "react-icons/hi";
+import { IoNotificationsOutline } from "react-icons/io5";
+import { MdOutlineMailOutline } from "react-icons/md";
+import { CgProfile } from "react-icons/cg";
 import { cn } from "@/lib/utils";
 
 type MobileNavItem = {
@@ -18,11 +16,28 @@ type MobileNavItem = {
 };
 
 const mobileNavItems: MobileNavItem[] = [
-  { label: "ホーム", href: "/home", icon: <HomeIcon className="size-[26px]" />, active: true },
-  { label: "検索", href: "#", icon: <SearchIcon className="size-[26px]" /> },
-  { label: "通知", href: "#", icon: <BellIcon className="size-[26px]" /> },
-  { label: "メッセージ", href: "#", icon: <MailIcon className="size-[26px]" /> },
-  { label: "プロフィール", href: "#", icon: <UserIcon className="size-[26px]" /> },
+  {
+    label: "ホーム",
+    href: "/home",
+    icon: <IoHomeOutline className="size-[26px]" />,
+    active: true,
+  },
+  { label: "検索", href: "#", icon: <HiSearch className="size-[26px]" /> },
+  {
+    label: "通知",
+    href: "#",
+    icon: <IoNotificationsOutline className="size-[26px]" />,
+  },
+  {
+    label: "メッセージ",
+    href: "#",
+    icon: <MdOutlineMailOutline className="size-[26px]" />,
+  },
+  {
+    label: "プロフィール",
+    href: "#",
+    icon: <CgProfile className="size-[26px]" />,
+  },
 ];
 
 function HomeMobileNav() {
