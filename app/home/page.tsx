@@ -21,7 +21,6 @@ export default async function Home() {
           nextCursor: null,
         }
       }
-      currentUser={timeline?.currentUser ?? null}
       timelineError={
         timeline === null && !timelineError
           ? "投稿一覧を表示するには再度ログインしてください"
