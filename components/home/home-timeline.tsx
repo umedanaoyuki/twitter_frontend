@@ -15,8 +15,8 @@ function HomeTimeline({ timeline, timelineError }: HomeTimelineProps) {
       <div className="mx-auto flex min-h-dvh w-full max-w-[1280px] justify-center">
         <div className="hidden shrink-0 lg:block lg:w-[275px]" aria-hidden />
 
-        <aside className="fixed top-0 left-1/2 z-20 hidden h-dvh w-full max-w-[1280px] -translate-x-1/2 lg:block">
-          <div className="h-full w-[275px]">
+        <aside className="pointer-events-none fixed top-0 left-1/2 z-20 hidden h-dvh w-full max-w-[1280px] -translate-x-1/2 lg:block">
+          <div className="pointer-events-auto h-full w-[275px]">
             <HomeSidebar />
           </div>
         </aside>
