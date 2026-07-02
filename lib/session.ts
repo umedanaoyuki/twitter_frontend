@@ -3,8 +3,6 @@ import { cookies } from "next/headers";
 export const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME;
 export const USER_ID_COOKIE_NAME = "user_id";
 
-export const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:8080";
-
 export async function getSessionCookieHeader(): Promise<string | undefined> {
   const cookieStore = await cookies();
   const session = cookieStore.get(SESSION_COOKIE_NAME as string);

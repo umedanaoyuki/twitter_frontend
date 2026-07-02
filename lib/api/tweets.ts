@@ -1,4 +1,4 @@
-import { API_BASE_URL, requireSessionCookieHeader } from "@/lib/session";
+import { requireSessionCookieHeader } from "@/lib/session";
 
 import { apiClient } from "./client";
 import { getApiErrorMessage } from "./errors";
@@ -33,7 +33,7 @@ export async function createImageTweet(
   const formData = new FormData();
   formData.append("image", image);
 
-  const response = await fetch(`${API_BASE_URL}/tweets-image`, {
+  const response = await fetch(`${process.env.API_BASE_URL}/tweets-image`, {
     method: "POST",
     headers: { Cookie: cookieHeader },
     body: formData,
@@ -44,9 +44,7 @@ export async function createImageTweet(
     | ErrorResponse;
 
   if (!response.ok) {
-    throw new Error(
-      getApiErrorMessage(body as ErrorResponse, response.status),
-    );
+    throw new Error(getApiErrorMessage(body as ErrorResponse, response.status));
   }
 
   return body as CreateImageTweetResponse;
@@ -56,15 +54,18 @@ export async function getUserTweets(
   userId: number,
   options?: { cursor?: number; limit?: number },
 ): Promise<GetUserTweetsResponse> {
-  const { data, error, response } = await apiClient.GET("/users/{user_id}/tweets", {
-    params: {
-      path: { user_id: userId },
-      query: {
-        cursor: options?.cursor,
-        limit: options?.limit ?? 20,
+  const { data, error, response } = await apiClient.GET(
+    "/users/{user_id}/tweets",
+    {
+      params: {
+        path: { user_id: userId },
+        query: {
+          cursor: options?.cursor,
+          limit: options?.limit ?? 20,
+        },
       },
     },
-  });
+  );
 
   if (error) {
     throw new Error(getApiErrorMessage(error, response.status));

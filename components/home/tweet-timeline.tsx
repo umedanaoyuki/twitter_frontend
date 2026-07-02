@@ -9,6 +9,9 @@ import type { Tweet, TweetTimelineData } from "@/lib/types/tweet";
 
 type TweetTimelineProps = TweetTimelineData;
 
+// TODO: デバッグ用。確認後に削除すること
+const LOAD_MORE_DEBUG_DELAY_MS = 2000;
+
 function TweetTimeline({
   tweets: initialTweets,
   hasMore: initialHasMore,
@@ -27,6 +30,10 @@ function TweetTimeline({
     if (!nextCursor) return;
 
     startTransition(async () => {
+      await new Promise((resolve) =>
+        setTimeout(resolve, LOAD_MORE_DEBUG_DELAY_MS),
+      );
+
       const result = await loadMoreTweetsAction(nextCursor);
       if ("error" in result) {
         toast.error(result.error);
