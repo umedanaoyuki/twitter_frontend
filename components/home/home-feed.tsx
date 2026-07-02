@@ -12,7 +12,7 @@ type HomeFeedProps = {
 
 function HomeFeed({ timeline, timelineError }: HomeFeedProps) {
   return (
-    <main className="font-chirp min-h-dvh w-full min-w-0 border-[#2f3336] pb-[calc(3.5rem+env(safe-area-inset-bottom,0))] lg:border-x lg:pb-0">
+    <main className="font-chirp min-h-dvh w-full min-w-0 overflow-x-hidden border-[#2f3336] pb-[calc(3.5rem+env(safe-area-inset-bottom,0))] lg:border-x lg:pb-0">
       <header className="sticky top-0 z-10 border-b border-[#2f3336] bg-black/80 backdrop-blur-md">
         <h1 className="px-4 py-3 text-xl font-bold text-[#e7e9ea]">ホーム</h1>
         <nav

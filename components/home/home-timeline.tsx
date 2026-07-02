@@ -11,13 +11,15 @@ type HomeTimelineProps = {
 
 function HomeTimeline({ timeline, timelineError }: HomeTimelineProps) {
   return (
-    <div className="home-page font-chirp min-h-dvh w-full overflow-x-hidden bg-black text-[#e7e9ea]">
+    <div className="home-page font-chirp min-h-dvh w-full bg-black text-[#e7e9ea]">
       <div className="mx-auto flex min-h-dvh w-full max-w-[1280px] justify-center">
-        <div className="hidden shrink-0 lg:flex lg:w-[275px] lg:justify-end">
-          <div className="w-[275px]">
+        <div className="hidden shrink-0 lg:block lg:w-[275px]" aria-hidden />
+
+        <aside className="fixed top-0 left-1/2 z-20 hidden h-dvh w-full max-w-[1280px] -translate-x-1/2 lg:block">
+          <div className="h-full w-[275px]">
             <HomeSidebar />
           </div>
-        </div>
+        </aside>
 
         <div className="min-w-0 w-full max-w-[600px] flex-1 lg:shrink-0">
           <HomeFeed timeline={timeline} timelineError={timelineError} />

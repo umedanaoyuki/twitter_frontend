@@ -31,8 +31,8 @@ const navItems: NavItem[] = [
 
 function HomeSidebar() {
   return (
-    <header className="font-chirp sticky top-0 flex h-dvh flex-col px-3">
-      <div className="flex flex-1 flex-col">
+    <div className="font-chirp flex h-full flex-col px-3">
+      <div className="flex min-h-0 flex-1 flex-col">
         <Link
           href="/home"
           className="mb-1 flex w-fit rounded-full p-3 transition-colors hover:bg-[#181818]"
@@ -71,7 +71,7 @@ function HomeSidebar() {
 
       <button
         type="button"
-        className="mb-3 flex w-full max-w-[234px] items-center gap-3 rounded-full p-3 transition-colors hover:bg-[#181818]"
+        className="mt-auto mb-3 flex w-full max-w-[234px] shrink-0 items-center gap-3 rounded-full p-3 transition-colors hover:bg-[#181818]"
       >
         <span
           className="size-10 shrink-0 rounded-full bg-[#536471]"
@@ -87,7 +87,7 @@ function HomeSidebar() {
         </span>
         <MoreIcon className="shrink-0 text-[#e7e9ea]" />
       </button>
-    </header>
+    </div>
   );
 }
 
