@@ -11,6 +11,7 @@ import {
   ALLOWED_IMAGE_TYPES,
   getTweetLength,
   MAX_TWEET_LENGTH,
+  validateTweetImage,
 } from "@/lib/validation/tweet";
 import { cn } from "@/lib/utils";
 
@@ -26,8 +27,10 @@ function ComposeTweet() {
   const contentLength = getTweetLength(content);
   const hasText = content.trim().length > 0;
   const hasImage = selectedImage !== null;
+  const imageError = selectedImage ? validateTweetImage(selectedImage) : null;
   const canSubmit =
     !isPending &&
+    !imageError &&
     ((hasText && !hasImage && contentLength <= MAX_TWEET_LENGTH) ||
       (hasImage && !hasText));
 
@@ -45,6 +48,15 @@ function ComposeTweet() {
   function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    const error = validateTweetImage(file);
+    if (error) {
+      toast.error(error);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
 
     if (imagePreviewUrl) {
       URL.revokeObjectURL(imagePreviewUrl);
@@ -73,19 +85,23 @@ function ComposeTweet() {
     }
 
     startTransition(async () => {
-      const result = await postTweetAction(formData);
-      if (!result) return;
+      try {
+        const result = await postTweetAction(formData);
+        if (!result) return;
 
-      if ("error" in result) {
-        toast.error(result.error);
-        return;
+        if ("error" in result) {
+          toast.error(result.error);
+          return;
+        }
+
+        toast.success(<ToastMessage message={result.message} />);
+        setContent("");
+        clearImage();
+        formRef.current?.reset();
+        router.refresh();
+      } catch {
+        toast.error("投稿に失敗しました。画像サイズが大きすぎる可能性があります");
       }
-
-      toast.success(<ToastMessage message={result.message} />);
-      setContent("");
-      clearImage();
-      formRef.current?.reset();
-      router.refresh();
     });
   }
 
