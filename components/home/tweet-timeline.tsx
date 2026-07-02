@@ -7,7 +7,7 @@ import { loadMoreTweetsAction } from "@/app/home/action";
 import { TweetCard } from "@/components/home/tweet-card";
 import type { Tweet, TweetTimelineData } from "@/lib/types/tweet";
 
-const LOADING_INDICATOR_DELAY_MS = 400;
+const LOADING_INDICATOR_DELAY_MS = 1000;
 
 function TweetTimeline({
   tweets: initialTweets,
@@ -17,7 +17,6 @@ function TweetTimeline({
   const [extraTweets, setExtraTweets] = useState<Tweet[]>([]);
   const [extraHasMore, setExtraHasMore] = useState<boolean | null>(null);
   const [extraNextCursor, setExtraNextCursor] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const isLoadingRef = useRef(false);
 
@@ -35,7 +34,6 @@ function TweetTimeline({
         await new Promise((resolve) =>
           setTimeout(resolve, LOADING_INDICATOR_DELAY_MS),
         );
-        setIsLoading(true);
 
         const result = await loadMoreTweetsAction(nextCursor);
         if ("error" in result) {
@@ -48,7 +46,6 @@ function TweetTimeline({
         setExtraNextCursor(result.nextCursor);
       } finally {
         isLoadingRef.current = false;
-        setIsLoading(false);
       }
     })();
   }, [nextCursor]);
@@ -91,9 +88,7 @@ function TweetTimeline({
           className="border-b border-[#2f3336] px-4 py-4 text-center"
           aria-live="polite"
         >
-          <p className="text-[15px] font-bold text-[#1d9bf0]">
-            {isLoading ? "読み込み中..." : "もっと見る"}
-          </p>
+          <p className="text-[15px] font-bold text-[#1d9bf0]">読み込み中...</p>
         </div>
       )}
     </>
