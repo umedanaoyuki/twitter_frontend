@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { AiOutlinePicture } from "react-icons/ai";
 
+import { RxCross1 } from "react-icons/rx";
 import { postTweetAction } from "@/app/home/action";
 import { ToastMessage } from "@/components/utils/toast-message";
 import {
@@ -14,6 +15,7 @@ import {
   validateTweetImage,
 } from "@/lib/validation/tweet";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 function ComposeTweet() {
   const router = useRouter();
@@ -100,13 +102,18 @@ function ComposeTweet() {
         formRef.current?.reset();
         router.refresh();
       } catch {
-        toast.error("投稿に失敗しました。画像サイズが大きすぎる可能性があります");
+        toast.error(
+          "投稿に失敗しました。画像サイズが大きすぎる可能性があります",
+        );
       }
     });
   }
 
   return (
-    <section aria-label="ポストを作成" className="border-b border-[#2f3336] px-4 py-3">
+    <section
+      aria-label="ポストを作成"
+      className="border-b border-[#2f3336] px-4 py-3"
+    >
       <form ref={formRef} onSubmit={handleSubmit}>
         <div className="flex gap-3">
           <div
@@ -145,9 +152,7 @@ function ComposeTweet() {
                   aria-label="画像を削除"
                   className="absolute top-2 right-2 flex size-8 items-center justify-center rounded-full bg-[#0f1419]/80 text-white transition-colors hover:bg-[#272b30]"
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden className="size-5 fill-current">
-                    <path d="M10.59 12 4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z" />
-                  </svg>
+                  <RxCross1 className="size-[20px]" />
                 </button>
               </div>
             )}
@@ -170,9 +175,7 @@ function ComposeTweet() {
                   onClick={() => fileInputRef.current?.click()}
                   className="rounded-full p-2 transition-colors hover:bg-[#1d9bf0]/10 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden className="size-5 fill-current">
-                    <path d="M8.75 3h-5.5A2.25 2.25 0 0 0 1 5.25v13.5A2.25 2.25 0 0 0 3.25 21h17.5A2.25 2.25 0 0 0 23 18.75V8.75A2.25 2.25 0 0 0 20.75 6.5h-7.836a1.25 1.25 0 0 1-.87-.354l-1.88-1.88A1.25 1.25 0 0 0 9.774 4H8.75zm-5.5 1.5h5.5a.75.75 0 0 1 .53.22l1.88 1.88c.14.14.33.22.53.22h7.836c.414 0 .75.336.75.75v10c0 .414-.336.75-.75.75H3.25a.75.75 0 0 1-.75-.75V5.25c0-.414.336-.75.75-.75z" />
-                  </svg>
+                  <AiOutlinePicture className="size-[20px]" />
                 </button>
                 {hasText && (
                   <span
