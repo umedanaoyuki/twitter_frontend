@@ -21,7 +21,7 @@ function HomeTimeline({ timeline, timelineError }: HomeTimelineProps) {
           </div>
         </aside>
 
-        <div className="min-w-0 w-full max-w-[600px] flex-1 lg:shrink-0">
+        <div className="w-full max-w-[600px] min-w-0 flex-1 lg:shrink-0">
           <HomeFeed timeline={timeline} timelineError={timelineError} />
         </div>
 
