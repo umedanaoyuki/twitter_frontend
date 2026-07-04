@@ -7,42 +7,60 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { IoIosMore } from "react-icons/io";
+import { DeleteAccountButton } from "@/components/home/delete-account-button";
 import { XLogoMark } from "@/components/home/x-logo-mark";
 import { cn } from "@/lib/utils";
 
-type NavItem = {
+type NavLinkItem = {
+  type: "link";
   label: string;
   href: string;
   icon: ReactNode;
   active?: boolean;
 };
 
+type NavDeleteItem = {
+  type: "delete";
+  label: string;
+};
+
+type NavItem = NavLinkItem | NavDeleteItem;
+
 const navItems: NavItem[] = [
   {
+    type: "link",
     label: "ホーム",
     href: "/home",
     icon: <IoHomeOutline className="size-[26px]" />,
     active: true,
   },
   {
+    type: "link",
     label: "話題を検索",
     href: "#",
     icon: <HiSearch className="size-[26px]" />,
   },
   {
+    type: "link",
     label: "通知",
     href: "#",
     icon: <IoNotificationsOutline className="size-[26px]" />,
   },
   {
+    type: "link",
     label: "メッセージ",
     href: "#",
     icon: <MdOutlineMailOutline className="size-[26px]" />,
   },
   {
+    type: "link",
     label: "プロフィール",
     href: "#",
     icon: <CgProfile className="size-[26px]" />,
+  },
+  {
+    type: "delete",
+    label: "退会",
   },
 ];
 
@@ -59,23 +77,31 @@ function HomeSidebar() {
         </Link>
 
         <nav aria-label="メインメニュー" className="mt-1 flex flex-col">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={cn(
-                "group flex w-fit items-center gap-5 rounded-full px-4 py-3 transition-colors hover:bg-[#181818]",
-                item.active && "font-bold",
-              )}
-            >
-              <span
-                className={cn("text-[#e7e9ea]", item.active && "scale-105")}
+          {navItems.map((item) => {
+            if (item.type === "delete") {
+              return (
+                <DeleteAccountButton key={item.label} label={item.label} />
+              );
+            }
+
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={cn(
+                  "group flex w-fit items-center gap-5 rounded-full px-4 py-3 transition-colors hover:bg-[#181818]",
+                  item.active && "font-bold",
+                )}
               >
-                {item.icon}
-              </span>
-              <span className="text-xl text-[#e7e9ea]">{item.label}</span>
-            </Link>
-          ))}
+                <span
+                  className={cn("text-[#e7e9ea]", item.active && "scale-105")}
+                >
+                  {item.icon}
+                </span>
+                <span className="text-xl text-[#e7e9ea]">{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
         <button
