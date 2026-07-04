@@ -16,6 +16,8 @@ export type GetUserTweetsResponse =
   components["schemas"]["controllers.GetUserTweetsResponse"];
 export type GetUserResponse =
   components["schemas"]["controllers.GetUserResponse"];
+export type StatusOKResponse =
+  components["schemas"]["controllers.StatusOKResponse"];
 export type SwaggerUserDetail =
   components["schemas"]["controllers.SwaggerUserDetail"];
 export type ApiTweet = components["schemas"]["controllers.SwaggerTweet"] & {

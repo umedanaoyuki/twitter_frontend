@@ -38,6 +38,18 @@ export async function requireSessionCookieHeader(): Promise<string> {
   return cookieHeader;
 }
 
+export async function clearAuthCookies(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete({
+    name: SESSION_COOKIE_NAME as string,
+    path: "/",
+  });
+  cookieStore.delete({
+    name: USER_ID_COOKIE_NAME,
+    path: "/",
+  });
+}
+
 type SetCookieFn = (
   name: string,
   value: string,
