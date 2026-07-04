@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-import { applySessionCookies } from "@/lib/session";
+import { applySessionCookies, USER_ID_COOKIE_NAME } from "@/lib/session";
 import type { LoginFormValues } from "@/lib/validation/login";
 import { login } from "@/lib/api/auth";
 
@@ -32,6 +32,14 @@ export async function loginAction(
       });
     }
 
+    if (data.user?.id) {
+      const cookieStore = await cookies();
+      cookieStore.set(USER_ID_COOKIE_NAME, String(data.user.id), {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+      });
+    }
 
     return {
       success: true,

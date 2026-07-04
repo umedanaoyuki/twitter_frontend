@@ -6,3 +6,18 @@ export type RegisterResponse =
 export type ErrorResponse = components["schemas"]["controllers.ErrorResponse"];
 export type LoginInput = components["schemas"]["controllers.LoginInput"];
 export type LoginResponse = components["schemas"]["controllers.LoginResponse"];
+export type CreateTweetInput =
+  components["schemas"]["controllers.CreateTweetInput"];
+export type CreateTweetResponse =
+  components["schemas"]["controllers.CreateTweetResponse"];
+export type CreateImageTweetResponse =
+  components["schemas"]["controllers.CreateImageTweetResponse"];
+export type GetUserTweetsResponse =
+  components["schemas"]["controllers.GetUserTweetsResponse"];
+export type GetUserResponse =
+  components["schemas"]["controllers.GetUserResponse"];
+export type SwaggerUserDetail =
+  components["schemas"]["controllers.SwaggerUserDetail"];
+export type ApiTweet = components["schemas"]["controllers.SwaggerTweet"] & {
+  image_url?: string;
+};

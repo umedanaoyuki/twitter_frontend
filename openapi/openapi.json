@@ -528,6 +528,82 @@
                 }
             }
         },
+        "/tweets-image": {
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "認証済みユーザーとして画像ファイルを投稿する",
+                "tags": [
+                    "tweets"
+                ],
+                "summary": "画像投稿",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "image": {
+                                        "description": "画像ファイル（JPEG/PNG・5MB以下）",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "required": [
+                                    "image"
+                                ]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.CreateImageTweetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/tweets/bookmarks": {
             "get": {
                 "security": [
@@ -1623,6 +1699,27 @@
                 "properties": {
                     "group": {
                         "$ref": "#/components/schemas/controllers.SwaggerGroup"
+                    }
+                }
+            },
+            "controllers.CreateImageTweetItem": {
+                "type": "object",
+                "properties": {
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/image.jpg"
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                }
+            },
+            "controllers.CreateImageTweetResponse": {
+                "type": "object",
+                "properties": {
+                    "tweet": {
+                        "$ref": "#/components/schemas/controllers.CreateImageTweetItem"
                     }
                 }
             },

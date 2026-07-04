@@ -555,6 +555,82 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tweets-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 画像投稿
+         * @description 認証済みユーザーとして画像ファイルを投稿する
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": {
+                        /**
+                         * Format: binary
+                         * @description 画像ファイル（JPEG/PNG・5MB以下）
+                         */
+                        image: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.CreateImageTweetResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tweets/bookmarks": {
         parameters: {
             query?: never;
@@ -1590,6 +1666,15 @@ export interface components {
         };
         "controllers.CreateGroupResponse": {
             group?: components["schemas"]["controllers.SwaggerGroup"];
+        };
+        "controllers.CreateImageTweetItem": {
+            /** @example https://example.com/image.jpg */
+            image_url?: string;
+            /** @example 1 */
+            user_id?: number;
+        };
+        "controllers.CreateImageTweetResponse": {
+            tweet?: components["schemas"]["controllers.CreateImageTweetItem"];
         };
         "controllers.CreateMessageInput": {
             /** @example メッセージ本文 */
