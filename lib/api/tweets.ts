@@ -7,6 +7,7 @@ import type {
   CreateTweetInput,
   CreateTweetResponse,
   ErrorResponse,
+  GetCurrentUserTweetsResponse,
   GetUserTweetsResponse,
 } from "./types";
 
@@ -48,6 +49,29 @@ export async function createImageTweet(
   }
 
   return body as CreateImageTweetResponse;
+}
+
+export async function getCurrentUserTweets(options?: {
+  cursor?: number;
+  limit?: number;
+}): Promise<GetCurrentUserTweetsResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.GET("/user/tweets", {
+    params: {
+      query: {
+        cursor: options?.cursor,
+        limit: options?.limit ?? 20,
+      },
+    },
+    // GinにセッションIDを送る
+    headers: { Cookie: cookieHeader },
+  });
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
 }
 
 export async function getUserTweets(
