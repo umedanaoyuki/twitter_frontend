@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-import { applySessionCookies, USER_ID_COOKIE_NAME } from "@/lib/session";
+import { applySessionCookies } from "@/lib/session";
 import type { LoginFormValues } from "@/lib/validation/login";
 import { login } from "@/lib/api/auth";
 
@@ -29,15 +29,6 @@ export async function loginAction(
       const cookieStore = await cookies();
       applySessionCookies(setCookieHeaders, (name, value, options) => {
         cookieStore.set(name, value, options);
-      });
-    }
-
-    if (data.user?.id) {
-      const cookieStore = await cookies();
-      cookieStore.set(USER_ID_COOKIE_NAME, String(data.user.id), {
-        path: "/",
-        httpOnly: true,
-        sameSite: "lax",
       });
     }
 

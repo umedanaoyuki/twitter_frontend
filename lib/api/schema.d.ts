@@ -431,6 +431,150 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * プロフィール更新
+         * @description ログイン中のユーザーのプロフィールを更新する
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description プロフィール情報 */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["controllers.UpdateUserProfileBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.UserProfileResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        /**
+         * プロフィール作成
+         * @description ログイン中のユーザーのプロフィールを作成する
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description プロフィール情報 */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["controllers.CreateUserProfileBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.UserProfileResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/register": {
         parameters: {
             query?: never;
@@ -751,7 +895,69 @@ export interface paths {
         };
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * ツイート削除
+         * @description 認証済みユーザーが自分のツイートを削除する（他人のツイートは削除できない）
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description ツイートID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.StatusOKResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
         options?: never;
         head?: never;
         patch?: never;
@@ -856,6 +1062,209 @@ export interface paths {
                 };
                 /** @description Unauthorized */
                 401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tweets/{id}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * コメント一覧取得
+         * @description 指定ツイートのコメントをカーソルページネーションで取得する
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description ページネーションカーソル（最後に取得したコメントID） */
+                    cursor?: number;
+                    /** @description 取得件数（1〜100、デフォルト20） */
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description ツイートID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.GetCommentsResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * コメント作成
+         * @description 指定ツイートにコメントする
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description ツイートID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            /** @description コメント内容 */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["controllers.CreateCommentBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.CreateCommentResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tweets/{id}/comments/{comment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * コメント削除
+         * @description 指定ツイートの自分のコメントを削除する
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description ツイートID */
+                    id: number;
+                    /** @description コメントID */
+                    comment_id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.StatusOKResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -1175,6 +1584,68 @@ export interface paths {
                 };
             };
         };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/tweets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ログインユーザーのツイート一覧取得
+         * @description ログイン中のユーザーのツイートをカーソルページネーションで取得する
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description ページネーションカーソル（最後に取得したツイートID） */
+                    cursor?: number;
+                    /** @description 取得件数（1〜100、デフォルト20） */
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.GetCurrentUserTweetsResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1519,6 +1990,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users/{user_id}/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * プロフィール取得
+         * @description 指定ユーザーのプロフィールを取得する
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description ユーザーID */
+                    user_id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.UserProfileResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/{user_id}/retweets": {
         parameters: {
             query?: never;
@@ -1653,6 +2193,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        "controllers.CreateCommentBody": {
+            /** @example いいツイートですね！ */
+            content: string;
+        };
+        "controllers.CreateCommentResponse": {
+            comment?: components["schemas"]["controllers.SwaggerComment"];
+        };
         "controllers.CreateGroupBody": {
             /**
              * @example [
@@ -1704,9 +2251,32 @@ export interface components {
         "controllers.CreateTweetResponse": {
             tweet?: components["schemas"]["controllers.CreateTweetItem"];
         };
+        "controllers.CreateUserProfileBody": {
+            /** @example 自己紹介文です */
+            bio?: string;
+            /** @example https://example.com/avatar.png */
+            image_url?: string;
+            /** @example Tokyo */
+            location?: string;
+            /** @example たろう */
+            name?: string;
+        };
         "controllers.ErrorResponse": {
             /** @example エラーメッセージ */
             error?: string;
+        };
+        "controllers.GetCommentsResponse": {
+            comments?: components["schemas"]["controllers.SwaggerComment"][];
+            /** @example false */
+            has_more?: boolean;
+            next_cursor?: number;
+        };
+        "controllers.GetCurrentUserTweetsResponse": {
+            /** @example false */
+            has_more?: boolean;
+            next_cursor?: number;
+            tweets?: components["schemas"]["controllers.SwaggerTweet"][];
+            user?: components["schemas"]["controllers.SwaggerUserDetail"];
         };
         "controllers.GetFollowersResponse": {
             followers?: components["schemas"]["controllers.SwaggerFollow"][];
@@ -1805,6 +2375,18 @@ export interface components {
             /** @example 1 */
             user_id?: number;
         };
+        "controllers.SwaggerComment": {
+            /** @example いいツイートですね！ */
+            content?: string;
+            /** @example 2024-01-01T00:00:00Z */
+            created_at?: string;
+            /** @example 1 */
+            id?: number;
+            /** @example 1 */
+            tweet_id?: number;
+            /** @example 1 */
+            user_id?: number;
+        };
         "controllers.SwaggerFollow": {
             /** @example 2024-01-01T00:00:00Z */
             created_at?: string;
@@ -1867,6 +2449,37 @@ export interface components {
             is_active?: boolean;
             /** @example 2024-01-01T00:00:00Z */
             updated_at?: string;
+        };
+        "controllers.SwaggerUserProfile": {
+            /** @example 自己紹介文のサンプル文です */
+            bio?: string;
+            /** @example 2024-01-01T00:00:00Z */
+            created_at?: string;
+            /** @example 1 */
+            id?: number;
+            /** @example https://example.com/avatar.png */
+            image_url?: string;
+            /** @example 東京 */
+            location?: string;
+            /** @example Taro007 */
+            name?: string;
+            /** @example 2024-01-01T00:00:00Z */
+            updated_at?: string;
+            /** @example 1 */
+            user_id?: number;
+        };
+        "controllers.UpdateUserProfileBody": {
+            /** @example 自己紹介文です */
+            bio?: string;
+            /** @example https://example.com/avatar.png */
+            image_url?: string;
+            /** @example Tokyo */
+            location?: string;
+            /** @example たろう */
+            name?: string;
+        };
+        "controllers.UserProfileResponse": {
+            profile?: components["schemas"]["controllers.SwaggerUserProfile"];
         };
     };
     responses: never;
