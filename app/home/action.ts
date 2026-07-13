@@ -2,18 +2,23 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createImageTweet, createTweet } from "@/lib/api/tweets";
+import {
+  completeTweetImage,
+  createTweet,
+  presignTweetImage,
+} from "@/lib/api/tweets";
 import { getHomeTimeline } from "@/lib/tweets/get-timeline";
 import type { Tweet } from "@/lib/types/tweet";
-import {
-  validateTweetContent,
-  validateTweetImage,
-} from "@/lib/validation/tweet";
+import { validateTweetContent } from "@/lib/validation/tweet";
 
 export type PostTweetState =
   | { error: string }
   | { success: true; message: string }
   | null;
+
+export type PresignTweetImageState =
+  | { error: string }
+  | { success: true; key: string; uploadUrl: string; publicUrl: string };
 
 export type LoadMoreTweetsState =
   | { error: string }
@@ -24,15 +29,40 @@ export type LoadMoreTweetsState =
       nextCursor: number | null;
     };
 
+export async function presignTweetImageAction(
+  contentType: string,
+  size: number,
+): Promise<PresignTweetImageState> {
+  try {
+    const result = await presignTweetImage({ content_type: contentType, size });
+    if (!result.key || !result.upload_url) {
+      return { error: "画像のアップロード準備に失敗しました" };
+    }
+
+    return {
+      success: true,
+      key: result.key,
+      uploadUrl: result.upload_url,
+      publicUrl: result.public_url ?? "",
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "画像のアップロード準備に失敗しました",
+    };
+  }
+}
+
 export async function postTweetAction(
   formData: FormData,
 ): Promise<PostTweetState> {
   const content = formData.get("content")?.toString() ?? "";
-  const imageEntry = formData.get("image");
-  const image = imageEntry instanceof File && imageEntry.size > 0 ? imageEntry : null;
+  const imageKey = formData.get("imageKey")?.toString() || null;
   const trimmedContent = content.trim();
   const hasText = trimmedContent.length > 0;
-  const hasImage = image !== null;
+  const hasImage = imageKey !== null;
 
   if (!hasText && !hasImage) {
     return { error: "テキストまたは画像を入力してください" };
@@ -47,12 +77,7 @@ export async function postTweetAction(
 
   try {
     if (hasImage) {
-      const imageError = validateTweetImage(image);
-      if (imageError) {
-        return { error: imageError };
-      }
-
-      await createImageTweet(image);
+      await completeTweetImage(imageKey);
       revalidatePath("/home");
       return { success: true, message: "画像を投稿しました" };
     }

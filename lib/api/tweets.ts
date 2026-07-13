@@ -3,12 +3,14 @@ import { requireSessionCookieHeader } from "@/lib/session";
 import { apiClient } from "./client";
 import { getApiErrorMessage } from "./errors";
 import type {
+  CompleteImageTweetInput,
   CreateImageTweetResponse,
   CreateTweetInput,
   CreateTweetResponse,
-  ErrorResponse,
   GetCurrentUserTweetsResponse,
   GetUserTweetsResponse,
+  PresignImageTweetInput,
+  PresignImageTweetResponse,
 } from "./types";
 
 export async function createTweet(
@@ -27,28 +29,43 @@ export async function createTweet(
   return data;
 }
 
-export async function createImageTweet(
-  image: File,
-): Promise<CreateImageTweetResponse> {
+export async function presignTweetImage(
+  input: PresignImageTweetInput,
+): Promise<PresignImageTweetResponse> {
   const cookieHeader = await requireSessionCookieHeader();
-  const formData = new FormData();
-  formData.append("image", image);
+  const { data, error, response } = await apiClient.POST(
+    "/tweets-image/presign",
+    {
+      body: input,
+      headers: { Cookie: cookieHeader },
+    },
+  );
 
-  const response = await fetch(`${process.env.API_BASE_URL}/tweets-image`, {
-    method: "POST",
-    headers: { Cookie: cookieHeader },
-    body: formData,
-  });
-
-  const body = (await response.json()) as
-    | CreateImageTweetResponse
-    | ErrorResponse;
-
-  if (!response.ok) {
-    throw new Error(getApiErrorMessage(body as ErrorResponse, response.status));
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
   }
 
-  return body as CreateImageTweetResponse;
+  return data;
+}
+
+export async function completeTweetImage(
+  key: string,
+): Promise<CreateImageTweetResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const input: CompleteImageTweetInput = { key };
+  const { data, error, response } = await apiClient.POST(
+    "/tweets-image/complete",
+    {
+      body: input,
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
 }
 
 export async function getCurrentUserTweets(options?: {

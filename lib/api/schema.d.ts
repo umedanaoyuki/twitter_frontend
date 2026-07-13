@@ -699,7 +699,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tweets-image": {
+    "/tweets-image/complete": {
         parameters: {
             query?: never;
             header?: never;
@@ -709,8 +709,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * 画像投稿
-         * @description 認証済みユーザーとして画像ファイルを投稿する
+         * 画像アップロード完了
+         * @description S3 へのアップロード完了後、key を確認して画像ツイートを作成する
          */
         post: {
             parameters: {
@@ -719,15 +719,10 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
+            /** @description アップロード済み画像の key */
             requestBody: {
                 content: {
-                    "multipart/form-data": {
-                        /**
-                         * Format: binary
-                         * @description 画像ファイル（JPEG/PNG・5MB以下）
-                         */
-                        image: string;
-                    };
+                    "application/json": components["schemas"]["controllers.CompleteImageTweetInput"];
                 };
             };
             responses: {
@@ -738,6 +733,77 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["controllers.CreateImageTweetResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tweets-image/presign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 画像アップロード許可
+         * @description 認証済みユーザー向けに S3 への直接アップロード用 URL と key を発行する
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description 画像メタ情報 */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["controllers.PresignImageTweetInput"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.PresignImageTweetResponse"];
                     };
                 };
                 /** @description Bad Request */
@@ -2193,6 +2259,10 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        "controllers.CompleteImageTweetInput": {
+            /** @example uploads/1_abc123.jpg */
+            key: string;
+        };
         "controllers.CreateCommentBody": {
             /** @example いいツイートですね！ */
             content: string;
@@ -2339,6 +2409,20 @@ export interface components {
         "controllers.MessageResponse": {
             /** @example 処理が完了しました */
             message?: string;
+        };
+        "controllers.PresignImageTweetInput": {
+            /** @example image/jpeg */
+            content_type: string;
+            /** @example 102400 */
+            size: number;
+        };
+        "controllers.PresignImageTweetResponse": {
+            /** @example uploads/1_abc123.jpg */
+            key?: string;
+            /** @example https://example.com/bucket/uploads/1_abc123.jpg */
+            public_url?: string;
+            /** @example https://s3.example.com/bucket/uploads/1_abc123.jpg?X-Amz-Signature=... */
+            upload_url?: string;
         };
         "controllers.RegisterInput": {
             /** @example user@example.com */

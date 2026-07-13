@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { AiOutlinePicture } from "react-icons/ai";
 
 import { RxCross1 } from "react-icons/rx";
-import { postTweetAction } from "@/app/home/action";
+import { postTweetAction, presignTweetImageAction } from "@/app/home/action";
 import { ToastMessage } from "@/components/utils/toast-message";
 import {
   ALLOWED_IMAGE_TYPES,
@@ -80,14 +80,34 @@ function ComposeTweet() {
     event.preventDefault();
     if (!canSubmit) return;
 
-    const formData = new FormData();
-    formData.set("content", content);
-    if (selectedImage) {
-      formData.set("image", selectedImage);
-    }
-
     startTransition(async () => {
       try {
+        const formData = new FormData();
+        formData.set("content", content);
+
+        if (selectedImage) {
+          const presignResult = await presignTweetImageAction(
+            selectedImage.type,
+            selectedImage.size,
+          );
+          if ("error" in presignResult) {
+            toast.error(presignResult.error);
+            return;
+          }
+
+          const uploadResponse = await fetch(presignResult.uploadUrl, {
+            method: "PUT",
+            headers: { "Content-Type": selectedImage.type },
+            body: selectedImage,
+          });
+          if (!uploadResponse.ok) {
+            toast.error("画像のアップロードに失敗しました");
+            return;
+          }
+
+          formData.set("imageKey", presignResult.key);
+        }
+
         const result = await postTweetAction(formData);
         if (!result) return;
 
@@ -101,10 +121,9 @@ function ComposeTweet() {
         clearImage();
         formRef.current?.reset();
         router.refresh();
-      } catch {
-        toast.error(
-          "投稿に失敗しました。画像サイズが大きすぎる可能性があります",
-        );
+      } catch (error) {
+        console.error("投稿処理でエラーが発生しました", error);
+        toast.error("投稿に失敗しました");
       }
     });
   }

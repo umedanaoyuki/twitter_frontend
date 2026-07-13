@@ -680,36 +680,27 @@
                 }
             }
         },
-        "/tweets-image": {
+        "/tweets-image/complete": {
             "post": {
                 "security": [
                     {
                         "SessionAuth": []
                     }
                 ],
-                "description": "認証済みユーザーとして画像ファイルを投稿する",
+                "description": "S3 へのアップロード完了後、key を確認して画像ツイートを作成する",
                 "tags": [
                     "tweets"
                 ],
-                "summary": "画像投稿",
+                "summary": "画像アップロード完了",
                 "requestBody": {
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "image": {
-                                        "description": "画像ファイル（JPEG/PNG・5MB以下）",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "required": [
-                                    "image"
-                                ]
+                                "$ref": "#/components/schemas/controllers.CompleteImageTweetInput"
                             }
                         }
                     },
+                    "description": "アップロード済み画像の key",
                     "required": true
                 },
                 "responses": {
@@ -719,6 +710,73 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/controllers.CreateImageTweetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tweets-image/presign": {
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "認証済みユーザー向けに S3 への直接アップロード用 URL と key を発行する",
+                "tags": [
+                    "tweets"
+                ],
+                "summary": "画像アップロード許可",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/controllers.PresignImageTweetInput"
+                            }
+                        }
+                    },
+                    "description": "画像メタ情報",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.PresignImageTweetResponse"
                                 }
                             }
                         }
@@ -2257,6 +2315,18 @@
             }
         },
         "schemas": {
+            "controllers.CompleteImageTweetInput": {
+                "type": "object",
+                "required": [
+                    "key"
+                ],
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "uploads/1_abc123.jpg"
+                    }
+                }
+            },
             "controllers.CreateCommentBody": {
                 "type": "object",
                 "required": [
@@ -2634,6 +2704,41 @@
                     "message": {
                         "type": "string",
                         "example": "処理が完了しました"
+                    }
+                }
+            },
+            "controllers.PresignImageTweetInput": {
+                "type": "object",
+                "required": [
+                    "content_type",
+                    "size"
+                ],
+                "properties": {
+                    "content_type": {
+                        "type": "string",
+                        "example": "image/jpeg"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 102400
+                    }
+                }
+            },
+            "controllers.PresignImageTweetResponse": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "uploads/1_abc123.jpg"
+                    },
+                    "public_url": {
+                        "type": "string",
+                        "example": "https://example.com/bucket/uploads/1_abc123.jpg"
+                    },
+                    "upload_url": {
+                        "type": "string",
+                        "example": "https://s3.example.com/bucket/uploads/1_abc123.jpg?X-Amz-Signature=..."
                     }
                 }
             },
