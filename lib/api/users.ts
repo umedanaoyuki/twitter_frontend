@@ -20,6 +20,7 @@ export async function getUserById(userId: number): Promise<GetUserResponse> {
 
 export async function deleteAccount(): Promise<StatusOKResponse> {
   const cookieHeader = await requireSessionCookieHeader();
+  console.log("cookieHeader", cookieHeader);
   const { data, error, response } = await apiClient.DELETE("/user", {
     headers: { Cookie: cookieHeader },
   });

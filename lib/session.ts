@@ -25,10 +25,6 @@ export async function clearAuthCookies(): Promise<void> {
     name: SESSION_COOKIE_NAME as string,
     path: "/",
   });
-  cookieStore.delete({
-    name: USER_ID_COOKIE_NAME,
-    path: "/",
-  });
 }
 
 type SetCookieFn = (
