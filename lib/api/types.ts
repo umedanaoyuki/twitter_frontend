@@ -12,8 +12,16 @@ export type CreateTweetResponse =
   components["schemas"]["controllers.CreateTweetResponse"];
 export type CreateImageTweetResponse =
   components["schemas"]["controllers.CreateImageTweetResponse"];
+export type PresignImageTweetInput =
+  components["schemas"]["controllers.PresignImageTweetInput"];
+export type PresignImageTweetResponse =
+  components["schemas"]["controllers.PresignImageTweetResponse"];
+export type CompleteImageTweetInput =
+  components["schemas"]["controllers.CompleteImageTweetInput"];
 export type GetUserTweetsResponse =
   components["schemas"]["controllers.GetUserTweetsResponse"];
+export type GetCurrentUserTweetsResponse =
+  components["schemas"]["controllers.GetCurrentUserTweetsResponse"];
 export type GetUserResponse =
   components["schemas"]["controllers.GetUserResponse"];
 export type StatusOKResponse =
