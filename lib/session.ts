@@ -1,6 +1,23 @@
+import { cookies } from "next/headers";
+
 export const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME;
 
-const API_BASE_URL = process.env.API_BASE_URL;
+export async function getSessionCookieHeader(): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  const session = cookieStore.get(SESSION_COOKIE_NAME as string);
+  if (!session) return undefined;
+
+  return `${session.name}=${session.value}`;
+}
+
+export async function requireSessionCookieHeader(): Promise<string> {
+  const cookieHeader = await getSessionCookieHeader();
+  if (!cookieHeader) {
+    throw new Error("ログインが必要です");
+  }
+
+  return cookieHeader;
+}
 
 type SetCookieFn = (
   name: string,
@@ -43,5 +60,3 @@ export function applySessionCookies(
     setCookie(name, decodeURIComponent(value), options);
   }
 }
-
-export { API_BASE_URL };

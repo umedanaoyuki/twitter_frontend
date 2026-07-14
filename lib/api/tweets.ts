@@ -1,0 +1,116 @@
+import { requireSessionCookieHeader } from "@/lib/session";
+
+import { apiClient } from "./client";
+import { getApiErrorMessage } from "./errors";
+import type {
+  CompleteImageTweetInput,
+  CreateImageTweetResponse,
+  CreateTweetInput,
+  CreateTweetResponse,
+  GetCurrentUserTweetsResponse,
+  GetUserTweetsResponse,
+  PresignImageTweetInput,
+  PresignImageTweetResponse,
+} from "./types";
+
+export async function createTweet(
+  input: CreateTweetInput,
+): Promise<CreateTweetResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.POST("/tweets", {
+    body: input,
+    headers: { Cookie: cookieHeader },
+  });
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+export async function presignTweetImage(
+  input: PresignImageTweetInput,
+): Promise<PresignImageTweetResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.POST(
+    "/tweets-image/presign",
+    {
+      body: input,
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+export async function completeTweetImage(
+  key: string,
+): Promise<CreateImageTweetResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const input: CompleteImageTweetInput = { key };
+  const { data, error, response } = await apiClient.POST(
+    "/tweets-image/complete",
+    {
+      body: input,
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+export async function getCurrentUserTweets(options?: {
+  cursor?: number;
+  limit?: number;
+}): Promise<GetCurrentUserTweetsResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.GET("/user/tweets", {
+    params: {
+      query: {
+        cursor: options?.cursor,
+        limit: options?.limit ?? 20,
+      },
+    },
+    // GinにセッションIDを送る
+    headers: { Cookie: cookieHeader },
+  });
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+export async function getUserTweets(
+  userId: number,
+  options?: { cursor?: number; limit?: number },
+): Promise<GetUserTweetsResponse> {
+  const { data, error, response } = await apiClient.GET(
+    "/users/{user_id}/tweets",
+    {
+      params: {
+        path: { user_id: userId },
+        query: {
+          cursor: options?.cursor,
+          limit: options?.limit ?? 20,
+        },
+      },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}

@@ -18,3 +18,9 @@
   font-family: "Chirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
 }
+
+/* /home: SP のオーバースクロールや body 余白の白抜けを防ぐ */
+html:has(.home-page),
+body:has(.home-page) {
+  background-color: #000;
+}

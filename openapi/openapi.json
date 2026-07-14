@@ -419,6 +419,158 @@
                 }
             }
         },
+        "/profile": {
+            "put": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "ログイン中のユーザーのプロフィールを更新する",
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "プロフィール更新",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/controllers.UpdateUserProfileBody"
+                            }
+                        }
+                    },
+                    "description": "プロフィール情報",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.UserProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "ログイン中のユーザーのプロフィールを作成する",
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "プロフィール作成",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/controllers.CreateUserProfileBody"
+                            }
+                        }
+                    },
+                    "description": "プロフィール情報",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.UserProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "メールアドレスとパスワードで新規ユーザーを登録する",
@@ -491,6 +643,140 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/controllers.CreateTweetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tweets-image/complete": {
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "S3 へのアップロード完了後、key を確認して画像ツイートを作成する",
+                "tags": [
+                    "tweets"
+                ],
+                "summary": "画像アップロード完了",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/controllers.CompleteImageTweetInput"
+                            }
+                        }
+                    },
+                    "description": "アップロード済み画像の key",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.CreateImageTweetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tweets-image/presign": {
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "認証済みユーザー向けに S3 への直接アップロード用 URL と key を発行する",
+                "tags": [
+                    "tweets"
+                ],
+                "summary": "画像アップロード許可",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/controllers.PresignImageTweetInput"
+                            }
+                        }
+                    },
+                    "description": "画像メタ情報",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.PresignImageTweetResponse"
                                 }
                             }
                         }
@@ -637,6 +923,81 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "認証済みユーザーが自分のツイートを削除する（他人のツイートは削除できない）",
+                "tags": [
+                    "tweets"
+                ],
+                "summary": "ツイート削除",
+                "parameters": [
+                    {
+                        "description": "ツイートID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.StatusOKResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/tweets/{id}/bookmark": {
@@ -750,6 +1111,237 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tweets/{id}/comments": {
+            "get": {
+                "description": "指定ツイートのコメントをカーソルページネーションで取得する",
+                "tags": [
+                    "comments"
+                ],
+                "summary": "コメント一覧取得",
+                "parameters": [
+                    {
+                        "description": "ツイートID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "ページネーションカーソル（最後に取得したコメントID）",
+                        "name": "cursor",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "取得件数（1〜100、デフォルト20）",
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.GetCommentsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "指定ツイートにコメントする",
+                "tags": [
+                    "comments"
+                ],
+                "summary": "コメント作成",
+                "parameters": [
+                    {
+                        "description": "ツイートID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/controllers.CreateCommentBody"
+                            }
+                        }
+                    },
+                    "description": "コメント内容",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.CreateCommentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tweets/{id}/comments/{comment_id}": {
+            "delete": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "指定ツイートの自分のコメントを削除する",
+                "tags": [
+                    "comments"
+                ],
+                "summary": "コメント削除",
+                "parameters": [
+                    {
+                        "description": "ツイートID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "コメントID",
+                        "name": "comment_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.StatusOKResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1054,6 +1646,71 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/controllers.StatusOKResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/tweets": {
+            "get": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "ログイン中のユーザーのツイートをカーソルページネーションで取得する",
+                "tags": [
+                    "tweets"
+                ],
+                "summary": "ログインユーザーのツイート一覧取得",
+                "parameters": [
+                    {
+                        "description": "ページネーションカーソル（最後に取得したツイートID）",
+                        "name": "cursor",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "取得件数（1〜100、デフォルト20）",
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.GetCurrentUserTweetsResponse"
                                 }
                             }
                         }
@@ -1443,6 +2100,68 @@
                 }
             }
         },
+        "/users/{user_id}/profile": {
+            "get": {
+                "description": "指定ユーザーのプロフィールを取得する",
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "プロフィール取得",
+                "parameters": [
+                    {
+                        "description": "ユーザーID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.UserProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/{user_id}/retweets": {
             "get": {
                 "description": "指定ユーザーのリツイートをカーソルページネーションで取得する",
@@ -1596,6 +2315,38 @@
             }
         },
         "schemas": {
+            "controllers.CompleteImageTweetInput": {
+                "type": "object",
+                "required": [
+                    "key"
+                ],
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "uploads/1_abc123.jpg"
+                    }
+                }
+            },
+            "controllers.CreateCommentBody": {
+                "type": "object",
+                "required": [
+                    "content"
+                ],
+                "properties": {
+                    "content": {
+                        "type": "string",
+                        "example": "いいツイートですね！"
+                    }
+                }
+            },
+            "controllers.CreateCommentResponse": {
+                "type": "object",
+                "properties": {
+                    "comment": {
+                        "$ref": "#/components/schemas/controllers.SwaggerComment"
+                    }
+                }
+            },
             "controllers.CreateGroupBody": {
                 "type": "object",
                 "required": [
@@ -1623,6 +2374,27 @@
                 "properties": {
                     "group": {
                         "$ref": "#/components/schemas/controllers.SwaggerGroup"
+                    }
+                }
+            },
+            "controllers.CreateImageTweetItem": {
+                "type": "object",
+                "properties": {
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/image.jpg"
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                }
+            },
+            "controllers.CreateImageTweetResponse": {
+                "type": "object",
+                "properties": {
+                    "tweet": {
+                        "$ref": "#/components/schemas/controllers.CreateImageTweetItem"
                     }
                 }
             },
@@ -1696,12 +2468,75 @@
                     }
                 }
             },
+            "controllers.CreateUserProfileBody": {
+                "type": "object",
+                "properties": {
+                    "bio": {
+                        "type": "string",
+                        "maxLength": 160,
+                        "example": "自己紹介文です"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/avatar.png"
+                    },
+                    "location": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "Tokyo"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "たろう"
+                    }
+                }
+            },
             "controllers.ErrorResponse": {
                 "type": "object",
                 "properties": {
                     "error": {
                         "type": "string",
                         "example": "エラーメッセージ"
+                    }
+                }
+            },
+            "controllers.GetCommentsResponse": {
+                "type": "object",
+                "properties": {
+                    "comments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/controllers.SwaggerComment"
+                        }
+                    },
+                    "has_more": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "next_cursor": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "controllers.GetCurrentUserTweetsResponse": {
+                "type": "object",
+                "properties": {
+                    "has_more": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "next_cursor": {
+                        "type": "integer"
+                    },
+                    "tweets": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/controllers.SwaggerTweet"
+                        }
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/controllers.SwaggerUserDetail"
                     }
                 }
             },
@@ -1872,6 +2707,41 @@
                     }
                 }
             },
+            "controllers.PresignImageTweetInput": {
+                "type": "object",
+                "required": [
+                    "content_type",
+                    "size"
+                ],
+                "properties": {
+                    "content_type": {
+                        "type": "string",
+                        "example": "image/jpeg"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 102400
+                    }
+                }
+            },
+            "controllers.PresignImageTweetResponse": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "uploads/1_abc123.jpg"
+                    },
+                    "public_url": {
+                        "type": "string",
+                        "example": "https://example.com/bucket/uploads/1_abc123.jpg"
+                    },
+                    "upload_url": {
+                        "type": "string",
+                        "example": "https://s3.example.com/bucket/uploads/1_abc123.jpg?X-Amz-Signature=..."
+                    }
+                }
+            },
             "controllers.RegisterInput": {
                 "type": "object",
                 "required": [
@@ -1935,6 +2805,31 @@
                     "content": {
                         "type": "string",
                         "example": "ツイート本文"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tweet_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                }
+            },
+            "controllers.SwaggerComment": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string",
+                        "example": "いいツイートですね！"
                     },
                     "created_at": {
                         "type": "string",
@@ -2084,6 +2979,75 @@
                     "updated_at": {
                         "type": "string",
                         "example": "2024-01-01T00:00:00Z"
+                    }
+                }
+            },
+            "controllers.SwaggerUserProfile": {
+                "type": "object",
+                "properties": {
+                    "bio": {
+                        "type": "string",
+                        "example": "自己紹介文のサンプル文です"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/avatar.png"
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "東京"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Taro007"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                }
+            },
+            "controllers.UpdateUserProfileBody": {
+                "type": "object",
+                "properties": {
+                    "bio": {
+                        "type": "string",
+                        "maxLength": 160,
+                        "example": "自己紹介文です"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/avatar.png"
+                    },
+                    "location": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "Tokyo"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "たろう"
+                    }
+                }
+            },
+            "controllers.UserProfileResponse": {
+                "type": "object",
+                "properties": {
+                    "profile": {
+                        "$ref": "#/components/schemas/controllers.SwaggerUserProfile"
                     }
                 }
             }
