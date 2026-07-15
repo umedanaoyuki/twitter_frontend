@@ -1,15 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
+import { getHomeTimeline } from "@/lib/tweets/get-timeline";
+import { deleteAccount } from "@/lib/api/users";
+import type { Tweet } from "@/lib/types/tweet";
+import { validateTweetContent } from "@/lib/validation/tweet";
+import { clearAuthCookies } from "@/lib/session";
 import {
   completeTweetImage,
   createTweet,
   presignTweetImage,
 } from "@/lib/api/tweets";
-import { getHomeTimeline } from "@/lib/tweets/get-timeline";
-import type { Tweet } from "@/lib/types/tweet";
-import { validateTweetContent } from "@/lib/validation/tweet";
 
 export type PostTweetState =
   | { error: string }
@@ -28,6 +29,10 @@ export type LoadMoreTweetsState =
       hasMore: boolean;
       nextCursor: number | null;
     };
+
+export type DeleteAccountState =
+  | { error: string }
+  | { success: true; message: string };
 
 export async function presignTweetImageAction(
   contentType: string,
@@ -120,3 +125,14 @@ export async function loadMoreTweetsAction(
   }
 }
 
+export async function deleteAccountAction(): Promise<DeleteAccountState> {
+  try {
+    await deleteAccount();
+    await clearAuthCookies();
+    return { success: true, message: "退会が完了しました" };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "退会に失敗しました",
+    };
+  }
+}
