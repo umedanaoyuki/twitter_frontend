@@ -1,4 +1,7 @@
-import type { ReactNode } from "react";
+"use client";
+
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
+import { useRouter } from "next/navigation";
 
 import type { Tweet } from "@/lib/types/tweet";
 import { FaComment } from "react-icons/fa";
@@ -22,6 +25,9 @@ function TweetAction({
     <button
       type="button"
       aria-label={label}
+      onClick={(event: MouseEvent<HTMLButtonElement>) =>
+        event.stopPropagation()
+      }
       className="group flex items-center gap-1 text-[#71767b] transition-colors hover:text-[#1d9bf0]"
     >
       <span className="flex size-[34px] items-center justify-center rounded-full transition-colors group-hover:bg-[#1d9bf0]/10">
@@ -34,9 +40,25 @@ function TweetAction({
 
 function TweetCard({ tweet }: TweetCardProps) {
   const { author, content, imageUrl, timestamp, createdAt, stats } = tweet;
+  const router = useRouter();
+
+  const navigateToDetail = () => {
+    router.push(`/tweets/${tweet.id}`);
+  };
 
   return (
-    <article className="border-b border-[#2f3336] px-4 py-3 transition-colors hover:bg-[#080808]">
+    <article
+      role="link"
+      tabIndex={0}
+      aria-label="ポストの詳細を見る"
+      onClick={navigateToDetail}
+      onKeyDown={(event: KeyboardEvent<HTMLElement>) => {
+        if (event.key === "Enter") {
+          navigateToDetail();
+        }
+      }}
+      className="cursor-pointer border-b border-[#2f3336] px-4 py-3 transition-colors hover:bg-[#080808]"
+    >
       <div className="flex gap-3">
         <div
           className="size-10 shrink-0 rounded-full bg-[#333639]"
@@ -73,6 +95,9 @@ function TweetCard({ tweet }: TweetCardProps) {
             <button
               type="button"
               aria-label="ポストのその他の操作"
+              onClick={(event: MouseEvent<HTMLButtonElement>) =>
+                event.stopPropagation()
+              }
               className="flex size-[34px] shrink-0 items-center justify-center rounded-full text-[#71767b] transition-colors hover:bg-[#1d9bf0]/10 hover:text-[#1d9bf0]"
             >
               <svg
