@@ -20,6 +20,8 @@ export type CompleteImageTweetInput =
   components["schemas"]["controllers.CompleteImageTweetInput"];
 export type GetUserTweetsResponse =
   components["schemas"]["controllers.GetUserTweetsResponse"];
+export type GetTweetResponse =
+  components["schemas"]["controllers.GetTweetResponse"];
 export type GetCurrentUserTweetsResponse =
   components["schemas"]["controllers.GetCurrentUserTweetsResponse"];
 export type GetUserResponse =

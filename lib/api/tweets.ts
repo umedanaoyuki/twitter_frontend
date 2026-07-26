@@ -8,6 +8,7 @@ import type {
   CreateTweetInput,
   CreateTweetResponse,
   GetCurrentUserTweetsResponse,
+  GetTweetResponse,
   GetUserTweetsResponse,
   PresignImageTweetInput,
   PresignImageTweetResponse,
@@ -85,6 +86,25 @@ export async function getCurrentUserTweets(options?: {
   });
 
   if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+export async function getTweet(
+  id: number,
+): Promise<GetTweetResponse | null> {
+  const { data, error, response } = await apiClient.GET("/tweets/{id}", {
+    params: {
+      path: { id },
+    },
+  });
+
+  if (error) {
+    if (response.status === 404) {
+      return null;
+    }
     throw new Error(getApiErrorMessage(error, response.status));
   }
 
