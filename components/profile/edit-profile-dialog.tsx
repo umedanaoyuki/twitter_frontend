@@ -62,10 +62,7 @@ function EditField({
         )}
       >
         <div className="flex items-baseline justify-between">
-          <label
-            htmlFor={id}
-            className="text-[13px] text-[#71767b]"
-          >
+          <label htmlFor={id} className="text-[13px] text-[#71767b]">
             {label}
           </label>
           {maxLength ? (
@@ -96,7 +93,9 @@ function EditField({
           />
         )}
       </div>
-      {error ? <p className="px-1 text-[13px] text-[#f4212e]">{error}</p> : null}
+      {error ? (
+        <p className="px-1 text-[13px] text-[#f4212e]">{error}</p>
+      ) : null}
     </div>
   );
 }
@@ -212,7 +211,7 @@ function EditProfileDialog({ exists, initialValues }: EditProfileDialogProps) {
           />
           <EditField
             id="profile-image-url"
-            label="アバター画像URL"
+            label="プロフィール画像URL"
             value={values.imageUrl}
             onChange={(v) => update("imageUrl", v)}
             error={errors.imageUrl}

@@ -18,13 +18,13 @@ function ProfileHeader({ profile }: ProfileHeaderProps) {
 
       <div className="px-4 pb-3">
         <div className="flex items-start justify-between">
-          {/* アバター（バナーに重ねる） */}
-          <div className="mt-[-15%] max-w-[25%] min-w-[48px]">
+          {/* プロフィール画像 */}
+          <div className="mt-[-5%] min-w-[80px]">
             <div className="aspect-square w-full overflow-hidden rounded-full border-4 border-black bg-[#333639]">
               {imageUrl ? (
                 <Image
                   src={imageUrl}
-                  alt={`${name}のアバター`}
+                  alt={`${name}のプロフィール画像`}
                   width={134}
                   height={134}
                   unoptimized
