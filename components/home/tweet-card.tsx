@@ -110,13 +110,13 @@ function TweetCard({
               </time>
             </div>
 
-            {isOwnTweet ? (
+            {isOwnTweet && (
               <TweetMenu
                 tweetId={tweet.id}
                 onDeleted={onDeleted}
                 redirectTo={redirectAfterDelete}
               />
-            ) : null}
+            )}
           </div>
 
           {content ? (
