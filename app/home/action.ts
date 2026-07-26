@@ -9,6 +9,7 @@ import { clearAuthCookies } from "@/lib/session";
 import {
   completeTweetImage,
   createTweet,
+  deleteTweet,
   presignTweetImage,
 } from "@/lib/api/tweets";
 
@@ -31,6 +32,10 @@ export type LoadMoreTweetsState =
     };
 
 export type DeleteAccountState =
+  | { error: string }
+  | { success: true; message: string };
+
+export type DeleteTweetState =
   | { error: string }
   | { success: true; message: string };
 
@@ -121,6 +126,25 @@ export async function loadMoreTweetsAction(
     return {
       error:
         error instanceof Error ? error.message : "投稿の取得に失敗しました",
+    };
+  }
+}
+
+export async function deleteTweetAction(
+  tweetId: string,
+): Promise<DeleteTweetState> {
+  const id = Number(tweetId);
+  if (!Number.isInteger(id) || id <= 0) {
+    return { error: "ポストの指定が正しくありません" };
+  }
+
+  try {
+    await deleteTweet(id);
+    revalidatePath("/home");
+    return { success: true, message: "ポストを削除しました" };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "削除に失敗しました",
     };
   }
 }

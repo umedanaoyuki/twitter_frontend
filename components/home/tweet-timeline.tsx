@@ -13,14 +13,22 @@ function TweetTimeline({
   tweets: initialTweets,
   hasMore: initialHasMore,
   nextCursor: initialNextCursor,
+  currentUserId,
 }: TweetTimelineData) {
   const [extraTweets, setExtraTweets] = useState<Tweet[]>([]);
   const [extraHasMore, setExtraHasMore] = useState<boolean | null>(null);
   const [extraNextCursor, setExtraNextCursor] = useState<number | null>(null);
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const isLoadingRef = useRef(false);
 
-  const tweets = [...initialTweets, ...extraTweets];
+  const tweets = [...initialTweets, ...extraTweets].filter(
+    (tweet) => !deletedIds.includes(tweet.id),
+  );
+
+  const handleDeleted = useCallback((tweetId: string) => {
+    setDeletedIds((current) => [...current, tweetId]);
+  }, []);
   const hasMore = extraHasMore ?? initialHasMore;
   const nextCursor = extraNextCursor ?? initialNextCursor;
 
@@ -80,7 +88,12 @@ function TweetTimeline({
   return (
     <>
       {tweets.map((tweet) => (
-        <TweetCard key={tweet.id} tweet={tweet} />
+        <TweetCard
+          key={tweet.id}
+          tweet={tweet}
+          currentUserId={currentUserId}
+          onDeleted={handleDeleted}
+        />
       ))}
       {hasMore && nextCursor !== null && (
         <div

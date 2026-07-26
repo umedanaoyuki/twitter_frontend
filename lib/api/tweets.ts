@@ -7,6 +7,7 @@ import type {
   CreateImageTweetResponse,
   CreateTweetInput,
   CreateTweetResponse,
+  DeleteTweetResponse,
   GetCurrentUserTweetsResponse,
   GetTweetResponse,
   GetUserTweetsResponse,
@@ -127,6 +128,24 @@ export async function getUserTweets(
       },
     },
   );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+export async function deleteTweet(
+  tweetId: number,
+): Promise<DeleteTweetResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.DELETE("/tweets/{id}", {
+    params: {
+      path: { id: tweetId },
+    },
+    headers: { Cookie: cookieHeader },
+  });
 
   if (error) {
     throw new Error(getApiErrorMessage(error, response.status));

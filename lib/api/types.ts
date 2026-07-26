@@ -18,6 +18,9 @@ export type PresignImageTweetResponse =
   components["schemas"]["controllers.PresignImageTweetResponse"];
 export type CompleteImageTweetInput =
   components["schemas"]["controllers.CompleteImageTweetInput"];
+// バックエンドの DELETE /tweets/{id} は controllers.StatusOKResponse を返す
+export type DeleteTweetResponse =
+  components["schemas"]["controllers.StatusOKResponse"];
 export type GetUserTweetsResponse =
   components["schemas"]["controllers.GetUserTweetsResponse"];
 export type GetTweetResponse =

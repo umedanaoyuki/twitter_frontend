@@ -4,12 +4,19 @@ import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 import type { Tweet } from "@/lib/types/tweet";
+import { TweetMenu } from "@/components/home/tweet-menu";
 import { FaComment } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { CiRepeat } from "react-icons/ci";
 
 type TweetCardProps = {
   tweet: Tweet;
+  /** ログイン中のユーザーID。投稿者と一致するときだけ操作メニューを表示する */
+  currentUserId?: number | null;
+  /** 一覧側で削除されたポストを即座に消すためのコールバック */
+  onDeleted?: (tweetId: string) => void;
+  /** 詳細画面など、削除後に別ページへ移動したいときの遷移先 */
+  redirectAfterDelete?: string;
 };
 
 function TweetAction({
@@ -38,9 +45,20 @@ function TweetAction({
   );
 }
 
-function TweetCard({ tweet }: TweetCardProps) {
+function TweetCard({
+  tweet,
+  currentUserId,
+  onDeleted,
+  redirectAfterDelete,
+}: TweetCardProps) {
   const { author, content, imageUrl, timestamp, createdAt, stats } = tweet;
   const router = useRouter();
+
+  // 自分のポストのときだけ削除メニューを出す（他人のポストはバックエンドでも削除不可）
+  const isOwnTweet =
+    currentUserId != null &&
+    tweet.authorId != null &&
+    currentUserId === tweet.authorId;
 
   const navigateToDetail = () => {
     router.push(`/tweets/${tweet.id}`);
@@ -92,22 +110,13 @@ function TweetCard({ tweet }: TweetCardProps) {
               </time>
             </div>
 
-            <button
-              type="button"
-              aria-label="ポストのその他の操作"
-              onClick={(event: MouseEvent<HTMLButtonElement>) =>
-                event.stopPropagation()
-              }
-              className="flex size-[34px] shrink-0 items-center justify-center rounded-full text-[#71767b] transition-colors hover:bg-[#1d9bf0]/10 hover:text-[#1d9bf0]"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden
-                className="size-5 fill-current"
-              >
-                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm9-2c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z" />
-              </svg>
-            </button>
+            {isOwnTweet ? (
+              <TweetMenu
+                tweetId={tweet.id}
+                onDeleted={onDeleted}
+                redirectTo={redirectAfterDelete}
+              />
+            ) : null}
           </div>
 
           {content ? (

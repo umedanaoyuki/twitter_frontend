@@ -20,5 +20,7 @@ export async function getHomeTimeline(
     tweets: mapApiTweetsToTimelineTweets(response.tweets ?? [], user),
     hasMore: response.has_more ?? false,
     nextCursor: response.next_cursor ?? null,
+    // /user/tweets が返す user はログイン中のユーザー自身
+    currentUserId: user.id ?? null,
   };
 }

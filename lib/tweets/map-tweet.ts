@@ -16,6 +16,7 @@ export function mapApiTweetToTweet(
 
   return {
     id: String(apiTweet.id ?? ""),
+    authorId: apiTweet.user_id ?? null,
     author: {
       name: displayName,
       handle: displayName,
