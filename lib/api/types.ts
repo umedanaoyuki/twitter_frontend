@@ -33,3 +33,10 @@ export type SwaggerUserDetail =
 export type ApiTweet = components["schemas"]["controllers.SwaggerTweet"] & {
   image_url?: string;
 };
+export type CreateCommentInput =
+  components["schemas"]["controllers.CreateCommentBody"];
+export type CreateCommentResponse =
+  components["schemas"]["controllers.CreateCommentResponse"];
+export type GetCommentsResponse =
+  components["schemas"]["controllers.GetCommentsResponse"];
+export type ApiComment = components["schemas"]["controllers.SwaggerComment"];
