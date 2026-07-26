@@ -9,7 +9,7 @@ export default async function TweetDetailPage({
   params,
 }: TweetDetailPageProps) {
   const { id } = await params;
-  const tweet = await getTweetDetail(id);
+  const { tweet, commentList } = await getTweetDetail(id);
 
-  return <TweetDetailView tweet={tweet} />;
+  return <TweetDetailView tweet={tweet} commentList={commentList} />;
 }

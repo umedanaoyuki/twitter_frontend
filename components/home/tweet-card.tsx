@@ -1,33 +1,41 @@
 "use client";
 
+import { useState } from "react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
+import { CommentDialog } from "@/components/home/comment-dialog";
+import type { Comment } from "@/lib/types/comment";
 import type { Tweet } from "@/lib/types/tweet";
+import { formatCount } from "@/lib/tweets/format";
 import { FaComment } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { CiRepeat } from "react-icons/ci";
 
 type TweetCardProps = {
   tweet: Tweet;
+  onCommented?: (comment: Comment) => void;
 };
 
 function TweetAction({
   label,
   count,
+  onClick,
   children,
 }: {
   label: string;
   count: string;
+  onClick?: () => void;
   children: ReactNode;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
-      onClick={(event: MouseEvent<HTMLButtonElement>) =>
-        event.stopPropagation()
-      }
+      onClick={(event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        onClick?.();
+      }}
       className="group flex items-center gap-1 text-[#71767b] transition-colors hover:text-[#1d9bf0]"
     >
       <span className="flex size-[34px] items-center justify-center rounded-full transition-colors group-hover:bg-[#1d9bf0]/10">
@@ -38,12 +46,19 @@ function TweetAction({
   );
 }
 
-function TweetCard({ tweet }: TweetCardProps) {
+function TweetCard({ tweet, onCommented }: TweetCardProps) {
   const { author, content, imageUrl, timestamp, createdAt, stats } = tweet;
   const router = useRouter();
+  const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
+  const [commentCount, setCommentCount] = useState(tweet.commentCount);
 
   const navigateToDetail = () => {
     router.push(`/tweets/${tweet.id}`);
+  };
+
+  const handleCommented = (comment: Comment) => {
+    setCommentCount((current) => current + 1);
+    onCommented?.(comment);
   };
 
   return (
@@ -130,8 +145,9 @@ function TweetCard({ tweet }: TweetCardProps) {
           <div className="mt-3 grid max-w-[425px] grid-cols-5">
             <div className="col-span-3 flex justify-between text-[#71767b]">
               <TweetAction
-                label={`返信 ${stats.replies}件`}
-                count={stats.replies}
+                label={`返信 ${commentCount}件`}
+                count={formatCount(commentCount)}
+                onClick={() => setIsCommentDialogOpen(true)}
               >
                 <FaComment />
               </TweetAction>
@@ -151,6 +167,13 @@ function TweetCard({ tweet }: TweetCardProps) {
           </div>
         </div>
       </div>
+
+      <CommentDialog
+        tweet={tweet}
+        open={isCommentDialogOpen}
+        onOpenChange={setIsCommentDialogOpen}
+        onCommented={handleCommented}
+      />
     </article>
   );
 }

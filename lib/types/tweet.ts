@@ -10,8 +10,9 @@ export type Tweet = {
   imageUrl?: string;
   timestamp: string;
   createdAt: string;
+  /** コメント（返信）件数 */
+  commentCount: number;
   stats: {
-    replies: string;
     reposts: string;
     likes: string;
     views: string;
