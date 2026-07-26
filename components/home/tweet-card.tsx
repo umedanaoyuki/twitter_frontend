@@ -66,11 +66,18 @@ function TweetCard({ tweet, onCommented }: TweetCardProps) {
       role="link"
       tabIndex={0}
       aria-label="ポストの詳細を見る"
-      onClick={navigateToDetail}
+      onClick={(event: MouseEvent<HTMLElement>) => {
+        // Portal(モーダル)内のイベントはDOM上は外側でもReactツリー上はここへ伝播するため、
+        // 実際にカード内から発生したものだけを遷移として扱う
+        if (!event.currentTarget.contains(event.target as Node)) return;
+        navigateToDetail();
+      }}
       onKeyDown={(event: KeyboardEvent<HTMLElement>) => {
-        if (event.key === "Enter") {
-          navigateToDetail();
+        // role="link" のカード自身にフォーカスがある場合のみ遷移する
+        if (event.key !== "Enter" || event.target !== event.currentTarget) {
+          return;
         }
+        navigateToDetail();
       }}
       className="cursor-pointer border-b border-[#2f3336] px-4 py-3 transition-colors hover:bg-[#080808]"
     >
