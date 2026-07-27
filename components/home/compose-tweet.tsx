@@ -17,7 +17,12 @@ import {
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-function ComposeTweet() {
+type ComposeTweetProps = {
+  /** ログイン中ユーザーのプロフィール画像URL */
+  avatarUrl?: string;
+};
+
+function ComposeTweet({ avatarUrl }: ComposeTweetProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -135,10 +140,18 @@ function ComposeTweet() {
     >
       <form ref={formRef} onSubmit={handleSubmit}>
         <div className="flex gap-3">
-          <div
-            className="size-10 shrink-0 rounded-full bg-[#536471]"
-            aria-hidden
-          />
+          <div className="size-10 shrink-0 overflow-hidden rounded-full bg-[#536471]">
+            {avatarUrl ? (
+              <Image
+                src={avatarUrl}
+                alt="自分のプロフィール画像"
+                width={40}
+                height={40}
+                unoptimized
+                className="size-full object-cover"
+              />
+            ) : null}
+          </div>
           <div className="min-w-0 flex-1">
             <label htmlFor="compose-input" className="sr-only">
               いまどうしてる？
