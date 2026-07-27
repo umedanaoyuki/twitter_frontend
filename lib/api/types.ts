@@ -28,6 +28,14 @@ export type GetUserResponse =
   components["schemas"]["controllers.GetUserResponse"];
 export type StatusOKResponse =
   components["schemas"]["controllers.StatusOKResponse"];
+export type SwaggerUserProfile =
+  components["schemas"]["controllers.SwaggerUserProfile"];
+export type UserProfileResponse =
+  components["schemas"]["controllers.UserProfileResponse"];
+export type CreateUserProfileBody =
+  components["schemas"]["controllers.CreateUserProfileBody"];
+export type UpdateUserProfileBody =
+  components["schemas"]["controllers.UpdateUserProfileBody"];
 export type SwaggerUserDetail =
   components["schemas"]["controllers.SwaggerUserDetail"];
 export type ApiTweet = components["schemas"]["controllers.SwaggerTweet"] & {
