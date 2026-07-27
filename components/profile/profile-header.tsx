@@ -18,9 +18,9 @@ function ProfileHeader({ profile }: ProfileHeaderProps) {
 
       <div className="px-4 pb-3">
         <div className="flex items-start justify-between">
-          {/* プロフィール画像 */}
-          <div className="mt-[-5%] min-w-[80px]">
-            <div className="aspect-square w-full overflow-hidden rounded-full border-4 border-black bg-[#333639]">
+          {/* プロフィール画像（画像の実サイズに引きずられないよう表示サイズを固定する） */}
+          <div className="mt-[-5%] shrink-0">
+            <div className="size-20 overflow-hidden rounded-full border-4 border-black bg-[#333639] sm:size-[134px]">
               {imageUrl ? (
                 <Image
                   src={imageUrl}

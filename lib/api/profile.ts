@@ -3,7 +3,10 @@ import { requireSessionCookieHeader } from "@/lib/session";
 import { apiClient } from "./client";
 import { getApiErrorMessage } from "./errors";
 import type {
+  CompleteProfileImageInput,
   CreateUserProfileBody,
+  PresignProfileImageInput,
+  PresignProfileImageResponse,
   SwaggerUserProfile,
   UpdateUserProfileBody,
 } from "./types";
@@ -43,6 +46,50 @@ export async function createUserProfile(
     body: input,
     headers: { Cookie: cookieHeader },
   });
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data.profile ?? null;
+}
+
+/** プロフィール画像をS3へ直接アップロードするためのURLとkeyを発行する。 */
+export async function presignProfileImage(
+  input: PresignProfileImageInput,
+): Promise<PresignProfileImageResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.POST(
+    "/profile-image/presign",
+    {
+      body: input,
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/**
+ * アップロード済み画像をプロフィール画像として確定する。
+ * プロフィール未作成の場合はGin側で404になるため、先に作成しておくこと。
+ */
+export async function completeProfileImage(
+  key: string,
+): Promise<SwaggerUserProfile | null> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const input: CompleteProfileImageInput = { key };
+  const { data, error, response } = await apiClient.POST(
+    "/profile-image/complete",
+    {
+      body: input,
+      headers: { Cookie: cookieHeader },
+    },
+  );
 
   if (error) {
     throw new Error(getApiErrorMessage(error, response.status));
