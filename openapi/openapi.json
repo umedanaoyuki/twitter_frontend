@@ -804,6 +804,64 @@
             }
         },
         "/tweets": {
+            "get": {
+                "description": "登録されている全ユーザーのツイートをカーソルページネーションで取得する",
+                "tags": [
+                    "tweets"
+                ],
+                "summary": "全ユーザーのツイート一覧取得",
+                "parameters": [
+                    {
+                        "description": "ページネーションカーソル（最後に取得したツイートID）",
+                        "name": "cursor",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "取得件数（1〜100、デフォルト20）",
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.GetAllTweetsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -2700,6 +2758,24 @@
                     "error": {
                         "type": "string",
                         "example": "エラーメッセージ"
+                    }
+                }
+            },
+            "controllers.GetAllTweetsResponse": {
+                "type": "object",
+                "properties": {
+                    "has_more": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "next_cursor": {
+                        "type": "integer"
+                    },
+                    "tweets": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/controllers.SwaggerTweet"
+                        }
                     }
                 }
             },

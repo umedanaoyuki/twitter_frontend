@@ -843,7 +843,53 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * 全ユーザーのツイート一覧取得
+         * @description 登録されている全ユーザーのツイートをカーソルページネーションで取得する
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description ページネーションカーソル（最後に取得したツイートID） */
+                    cursor?: number;
+                    /** @description 取得件数（1〜100、デフォルト20） */
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.GetAllTweetsResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
         put?: never;
         /**
          * ツイート投稿
@@ -2546,6 +2592,12 @@ export interface components {
         "controllers.ErrorResponse": {
             /** @example エラーメッセージ */
             error?: string;
+        };
+        "controllers.GetAllTweetsResponse": {
+            /** @example false */
+            has_more?: boolean;
+            next_cursor?: number;
+            tweets?: components["schemas"]["controllers.SwaggerTweet"][];
         };
         "controllers.GetCommentsResponse": {
             comments?: components["schemas"]["controllers.SwaggerComment"][];
