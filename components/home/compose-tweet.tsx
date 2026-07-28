@@ -141,7 +141,7 @@ function ComposeTweet({ avatarUrl }: ComposeTweetProps) {
       <form ref={formRef} onSubmit={handleSubmit}>
         <div className="flex gap-3">
           <div className="size-10 shrink-0 overflow-hidden rounded-full bg-[#536471]">
-            {avatarUrl ? (
+            {avatarUrl && (
               <Image
                 src={avatarUrl}
                 alt="自分のプロフィール画像"
@@ -150,7 +150,7 @@ function ComposeTweet({ avatarUrl }: ComposeTweetProps) {
                 unoptimized
                 className="size-full object-cover"
               />
-            ) : null}
+            )}
           </div>
           <div className="min-w-0 flex-1">
             <label htmlFor="compose-input" className="sr-only">
