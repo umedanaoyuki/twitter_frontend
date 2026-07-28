@@ -12,10 +12,10 @@ import {
   ALLOWED_IMAGE_TYPES,
   getTweetLength,
   MAX_TWEET_LENGTH,
-  validateTweetImage,
 } from "@/lib/validation/tweet";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { validateImageFile } from "@/lib/validation/image";
 
 type ComposeTweetProps = {
   /** ログイン中ユーザーのプロフィール画像URL */
@@ -34,7 +34,7 @@ function ComposeTweet({ avatarUrl }: ComposeTweetProps) {
   const contentLength = getTweetLength(content);
   const hasText = content.trim().length > 0;
   const hasImage = selectedImage !== null;
-  const imageError = selectedImage ? validateTweetImage(selectedImage) : null;
+  const imageError = selectedImage ? validateImageFile(selectedImage) : null;
   const canSubmit =
     !isPending &&
     !imageError &&
@@ -56,7 +56,7 @@ function ComposeTweet({ avatarUrl }: ComposeTweetProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const error = validateTweetImage(file);
+    const error = validateImageFile(file);
     if (error) {
       toast.error(error);
       if (fileInputRef.current) {

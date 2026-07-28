@@ -1,5 +1,3 @@
-import { validateImageFile } from "@/lib/validation/image";
-
 export const MAX_TWEET_LENGTH = 140;
 export {
   ALLOWED_IMAGE_TYPES,
@@ -22,8 +20,4 @@ export function validateTweetContent(content: string): string | null {
   }
 
   return null;
-}
-
-export function validateTweetImage(image: File): string | null {
-  return validateImageFile(image);
 }
