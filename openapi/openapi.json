@@ -419,6 +419,52 @@
                 }
             }
         },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "セッションを破棄し、セッション Cookie を削除する",
+                "tags": [
+                    "auth"
+                ],
+                "summary": "ログアウト",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.MessageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
             "put": {
                 "security": [
@@ -571,6 +617,150 @@
                 }
             }
         },
+        "/profile-image/complete": {
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "S3 へのアップロード完了後、key を確認してプロフィール画像を保存する",
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "プロフィール画像アップロード完了",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/controllers.CompleteProfileImageInput"
+                            }
+                        }
+                    },
+                    "description": "アップロード済み画像の key",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.UserProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/profile-image/presign": {
+            "post": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "認証済みユーザー向けに S3 への直接アップロード用 URL と key を発行する",
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "プロフィール画像アップロード許可",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/controllers.PresignProfileImageInput"
+                            }
+                        }
+                    },
+                    "description": "画像メタ情報",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.PresignProfileImageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "メールアドレスとパスワードで新規ユーザーを登録する",
@@ -614,6 +804,64 @@
             }
         },
         "/tweets": {
+            "get": {
+                "description": "登録されている全ユーザーのツイートをカーソルページネーションで取得する",
+                "tags": [
+                    "tweets"
+                ],
+                "summary": "全ユーザーのツイート一覧取得",
+                "parameters": [
+                    {
+                        "description": "ページネーションカーソル（最後に取得したツイートID）",
+                        "name": "cursor",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "取得件数（1〜100、デフォルト20）",
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.GetAllTweetsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -2327,6 +2575,18 @@
                     }
                 }
             },
+            "controllers.CompleteProfileImageInput": {
+                "type": "object",
+                "required": [
+                    "key"
+                ],
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "uploads/1_abc123.jpg"
+                    }
+                }
+            },
             "controllers.CreateCommentBody": {
                 "type": "object",
                 "required": [
@@ -2498,6 +2758,24 @@
                     "error": {
                         "type": "string",
                         "example": "エラーメッセージ"
+                    }
+                }
+            },
+            "controllers.GetAllTweetsResponse": {
+                "type": "object",
+                "properties": {
+                    "has_more": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "next_cursor": {
+                        "type": "integer"
+                    },
+                    "tweets": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/controllers.SwaggerTweet"
+                        }
                     }
                 }
             },
@@ -2726,6 +3004,41 @@
                 }
             },
             "controllers.PresignImageTweetResponse": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "uploads/1_abc123.jpg"
+                    },
+                    "public_url": {
+                        "type": "string",
+                        "example": "https://example.com/bucket/uploads/1_abc123.jpg"
+                    },
+                    "upload_url": {
+                        "type": "string",
+                        "example": "https://s3.example.com/bucket/uploads/1_abc123.jpg?X-Amz-Signature=..."
+                    }
+                }
+            },
+            "controllers.PresignProfileImageInput": {
+                "type": "object",
+                "required": [
+                    "content_type",
+                    "size"
+                ],
+                "properties": {
+                    "content_type": {
+                        "type": "string",
+                        "example": "image/jpeg"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 102400
+                    }
+                }
+            },
+            "controllers.PresignProfileImageResponse": {
                 "type": "object",
                 "properties": {
                     "key": {
