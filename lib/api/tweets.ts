@@ -8,6 +8,7 @@ import type {
   CreateTweetInput,
   CreateTweetResponse,
   DeleteTweetResponse,
+  GetAllTweetsResponse,
   GetCurrentUserTweetsResponse,
   GetTweetResponse,
   GetUserTweetsResponse,
@@ -93,9 +94,28 @@ export async function getCurrentUserTweets(options?: {
   return data;
 }
 
-export async function getTweet(
-  id: number,
-): Promise<GetTweetResponse | null> {
+/** 登録されている全ユーザーのツイートを取得する（認証不要） */
+export async function getAllTweets(options?: {
+  cursor?: number;
+  limit?: number;
+}): Promise<GetAllTweetsResponse> {
+  const { data, error, response } = await apiClient.GET("/tweets", {
+    params: {
+      query: {
+        cursor: options?.cursor,
+        limit: options?.limit ?? 20,
+      },
+    },
+  });
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+export async function getTweet(id: number): Promise<GetTweetResponse | null> {
   const { data, error, response } = await apiClient.GET("/tweets/{id}", {
     params: {
       path: { id },

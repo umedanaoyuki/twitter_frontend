@@ -1,26 +1,37 @@
-import { getCurrentUserTweets } from "@/lib/api/tweets";
+import { getAllTweets } from "@/lib/api/tweets";
 import { getSessionCookieHeader } from "@/lib/session";
 import type { TweetTimelineData } from "@/lib/types/tweet";
 import { mapApiTweetsToTimelineTweets } from "@/lib/tweets/map-tweet";
+import { getCurrentUserId } from "@/lib/users/get-current-user";
+import { getUsersByIds } from "@/lib/users/get-user-detail";
 
-export async function getHomeTimeline(
-  options?: { cursor?: number; limit?: number },
-): Promise<TweetTimelineData | null> {
+/**
+ * ホームのタイムラインを取得する。
+ * GET /tweets は登録されている全ユーザーのツイートを返すので、
+ * 投稿者名の表示に必要なユーザー情報は user_id ごとに別途取得する。
+ */
+export async function getHomeTimeline(options?: {
+  cursor?: number;
+  limit?: number;
+}): Promise<TweetTimelineData | null> {
   const cookieHeader = await getSessionCookieHeader();
   if (!cookieHeader) return null;
 
-  const response = await getCurrentUserTweets(options);
+  const [response, currentUserId] = await Promise.all([
+    getAllTweets(options),
+    getCurrentUserId(),
+  ]);
 
-  const user = response.user;
-  if (!user?.email) {
-    throw new Error("ユーザー情報の取得に失敗しました");
-  }
+  const apiTweets = response.tweets ?? [];
+  const authorIds = apiTweets
+    .map((apiTweet) => apiTweet.user_id)
+    .filter((userId): userId is number => userId != null);
+  const usersById = await getUsersByIds(authorIds);
 
   return {
-    tweets: mapApiTweetsToTimelineTweets(response.tweets ?? [], user),
+    tweets: mapApiTweetsToTimelineTweets(apiTweets, usersById),
     hasMore: response.has_more ?? false,
     nextCursor: response.next_cursor ?? null,
-    // /user/tweets が返す user はログイン中のユーザー自身
-    currentUserId: user.id ?? null,
+    currentUserId,
   };
 }

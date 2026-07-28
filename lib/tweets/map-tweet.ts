@@ -8,9 +8,10 @@ import {
 
 export function mapApiTweetToTweet(
   apiTweet: ApiTweet,
-  user: SwaggerUserDetail,
+  /** 投稿者の情報。取得できなかった場合は user{user_id} を表示名にフォールバックする */
+  user?: SwaggerUserDetail | null,
 ): Tweet {
-  const email = user.email ?? `user${apiTweet.user_id ?? ""}`;
+  const email = user?.email ?? `user${apiTweet.user_id ?? ""}`;
   const displayName = emailToDisplayName(email);
   const createdAt = apiTweet.created_at ?? new Date().toISOString();
 
@@ -34,9 +35,18 @@ export function mapApiTweetToTweet(
   };
 }
 
+/**
+ * タイムライン用に複数ツイートを変換する。
+ * 投稿者はツイートごとに異なるため、user_id をキーにしたユーザー情報を受け取る。
+ */
 export function mapApiTweetsToTimelineTweets(
   apiTweets: ApiTweet[],
-  user: SwaggerUserDetail,
+  usersById: Map<number, SwaggerUserDetail>,
 ): Tweet[] {
-  return apiTweets.map((apiTweet) => mapApiTweetToTweet(apiTweet, user));
+  return apiTweets.map((apiTweet) =>
+    mapApiTweetToTweet(
+      apiTweet,
+      apiTweet.user_id != null ? usersById.get(apiTweet.user_id) : null,
+    ),
+  );
 }
