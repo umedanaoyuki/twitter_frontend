@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { getTweet } from "@/lib/api/tweets";
 import { getUserById } from "@/lib/api/users";
+import { getProfileImageUrl } from "@/lib/profile/get-profile";
 import { mapApiTweetToTweet } from "@/lib/tweets/map-tweet";
 import type { Tweet } from "@/lib/types/tweet";
 
@@ -23,5 +24,7 @@ export async function getTweetDetail(id: string): Promise<Tweet> {
     throw new Error("ユーザー情報の取得に失敗しました");
   }
 
-  return mapApiTweetToTweet(tweet, user);
+  const avatarUrl = user.id ? await getProfileImageUrl(user.id) : undefined;
+
+  return mapApiTweetToTweet(tweet, user, avatarUrl);
 }

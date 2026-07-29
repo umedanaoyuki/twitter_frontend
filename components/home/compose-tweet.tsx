@@ -12,12 +12,17 @@ import {
   ALLOWED_IMAGE_TYPES,
   getTweetLength,
   MAX_TWEET_LENGTH,
-  validateTweetImage,
 } from "@/lib/validation/tweet";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { validateImageFile } from "@/lib/validation/image";
 
-function ComposeTweet() {
+type ComposeTweetProps = {
+  /** ログイン中ユーザーのプロフィール画像URL */
+  avatarUrl?: string;
+};
+
+function ComposeTweet({ avatarUrl }: ComposeTweetProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +34,7 @@ function ComposeTweet() {
   const contentLength = getTweetLength(content);
   const hasText = content.trim().length > 0;
   const hasImage = selectedImage !== null;
-  const imageError = selectedImage ? validateTweetImage(selectedImage) : null;
+  const imageError = selectedImage ? validateImageFile(selectedImage) : null;
   const canSubmit =
     !isPending &&
     !imageError &&
@@ -51,7 +56,7 @@ function ComposeTweet() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const error = validateTweetImage(file);
+    const error = validateImageFile(file);
     if (error) {
       toast.error(error);
       if (fileInputRef.current) {
@@ -135,10 +140,18 @@ function ComposeTweet() {
     >
       <form ref={formRef} onSubmit={handleSubmit}>
         <div className="flex gap-3">
-          <div
-            className="size-10 shrink-0 rounded-full bg-[#536471]"
-            aria-hidden
-          />
+          <div className="size-10 shrink-0 overflow-hidden rounded-full bg-[#536471]">
+            {avatarUrl && (
+              <Image
+                src={avatarUrl}
+                alt="自分のプロフィール画像"
+                width={40}
+                height={40}
+                unoptimized
+                className="size-full object-cover"
+              />
+            )}
+          </div>
           <div className="min-w-0 flex-1">
             <label htmlFor="compose-input" className="sr-only">
               いまどうしてる？
