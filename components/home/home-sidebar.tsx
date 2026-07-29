@@ -55,7 +55,7 @@ const navItems: NavItem[] = [
   {
     type: "link",
     label: "プロフィール",
-    href: "#",
+    href: "/profile",
     icon: <CgProfile className="size-[26px]" />,
   },
   {

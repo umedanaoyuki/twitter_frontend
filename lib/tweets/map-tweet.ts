@@ -9,6 +9,8 @@ import {
 export function mapApiTweetToTweet(
   apiTweet: ApiTweet,
   user: SwaggerUserDetail,
+  /** 投稿者のプロフィール画像URL（ツイートAPIには含まれないため呼び出し側から渡す） */
+  avatarUrl?: string,
 ): Tweet {
   const email = user.email ?? `user${apiTweet.user_id ?? ""}`;
   const displayName = emailToDisplayName(email);
@@ -19,6 +21,7 @@ export function mapApiTweetToTweet(
     author: {
       name: displayName,
       handle: displayName,
+      avatarUrl: avatarUrl || undefined,
     },
     content: apiTweet.content ?? "",
     imageUrl: apiTweet.image_url || undefined,
@@ -36,6 +39,9 @@ export function mapApiTweetToTweet(
 export function mapApiTweetsToTimelineTweets(
   apiTweets: ApiTweet[],
   user: SwaggerUserDetail,
+  avatarUrl?: string,
 ): Tweet[] {
-  return apiTweets.map((apiTweet) => mapApiTweetToTweet(apiTweet, user));
+  return apiTweets.map((apiTweet) =>
+    mapApiTweetToTweet(apiTweet, user, avatarUrl),
+  );
 }

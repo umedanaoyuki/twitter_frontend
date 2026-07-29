@@ -23,4 +23,6 @@ export type TweetTimelineData = {
   tweets: Tweet[];
   hasMore: boolean;
   nextCursor: number | null;
+  /** ログイン中ユーザーのプロフィール画像URL（投稿フォームのアイコン用） */
+  viewerAvatarUrl?: string;
 };

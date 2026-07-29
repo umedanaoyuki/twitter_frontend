@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { CommentDialog } from "@/components/home/comment-dialog";
@@ -82,11 +83,25 @@ function TweetCard({ tweet, onCommented }: TweetCardProps) {
       className="cursor-pointer border-b border-[#2f3336] px-4 py-3 transition-colors hover:bg-[#080808]"
     >
       <div className="flex gap-3">
-        <div
-          className="size-10 shrink-0 rounded-full bg-[#333639]"
-          role="img"
-          aria-label={`${author.name}のアバター`}
-        />
+        {/* 画像の実サイズに引きずられないよう表示サイズを固定する */}
+        <div className="size-10 shrink-0 overflow-hidden rounded-full bg-[#333639]">
+          {author.avatarUrl ? (
+            <Image
+              src={author.avatarUrl}
+              alt={`${author.name}のアバター`}
+              width={40}
+              height={40}
+              unoptimized
+              className="size-full object-cover"
+            />
+          ) : (
+            <div
+              className="size-full"
+              role="img"
+              aria-label={`${author.name}のアバター`}
+            />
+          )}
+        </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
