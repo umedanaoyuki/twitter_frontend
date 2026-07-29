@@ -39,7 +39,7 @@ function HomeFeed({ timeline, timelineError }: HomeFeedProps) {
         </nav>
       </header>
 
-      <ComposeTweet />
+      <ComposeTweet avatarUrl={timeline.viewerAvatarUrl} />
 
       <section aria-label="タイムライン">
         {timelineError ? (
