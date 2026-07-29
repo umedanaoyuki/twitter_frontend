@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { CommentDialog } from "@/components/home/comment-dialog";
 import type { Comment } from "@/lib/types/comment";
 import type { Tweet } from "@/lib/types/tweet";
-import { formatCount } from "@/lib/tweets/format";
 import { FaComment } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { CiRepeat } from "react-icons/ci";
@@ -25,7 +24,7 @@ function TweetAction({
   children,
 }: {
   label: string;
-  count: string;
+  count?: string;
   onClick?: () => void;
   children: ReactNode;
 }) {
@@ -42,7 +41,9 @@ function TweetAction({
       <span className="flex size-[34px] items-center justify-center rounded-full transition-colors group-hover:bg-[#1d9bf0]/10">
         {children}
       </span>
-      <span className="min-w-[1ch] text-[13px] tabular-nums">{count}</span>
+      {count ? (
+        <span className="min-w-[1ch] text-[13px] tabular-nums">{count}</span>
+      ) : null}
     </button>
   );
 }
@@ -51,15 +52,9 @@ function TweetCard({ tweet, onCommented }: TweetCardProps) {
   const { author, content, imageUrl, timestamp, createdAt, stats } = tweet;
   const router = useRouter();
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
-  const [commentCount, setCommentCount] = useState(tweet.commentCount);
 
   const navigateToDetail = () => {
     router.push(`/tweets/${tweet.id}`);
-  };
-
-  const handleCommented = (comment: Comment) => {
-    setCommentCount((current) => current + 1);
-    onCommented?.(comment);
   };
 
   return (
@@ -167,8 +162,7 @@ function TweetCard({ tweet, onCommented }: TweetCardProps) {
           <div className="mt-3 grid max-w-[425px] grid-cols-5">
             <div className="col-span-3 flex justify-between text-[#71767b]">
               <TweetAction
-                label={`返信 ${commentCount}件`}
-                count={formatCount(commentCount)}
+                label="返信"
                 onClick={() => setIsCommentDialogOpen(true)}
               >
                 <FaComment />
@@ -194,7 +188,7 @@ function TweetCard({ tweet, onCommented }: TweetCardProps) {
         tweet={tweet}
         open={isCommentDialogOpen}
         onOpenChange={setIsCommentDialogOpen}
-        onCommented={handleCommented}
+        onCommented={onCommented}
       />
     </article>
   );
