@@ -3,6 +3,7 @@ import { getCurrentUserTweets } from "@/lib/api/tweets";
 import { getSessionCookieHeader } from "@/lib/session";
 import type { ProfilePageData } from "@/lib/types/profile";
 import { mapProfileToView } from "@/lib/profile/map-profile";
+import { getRetweetedTweetIds } from "@/lib/tweets/get-my-retweets";
 import { mapApiTweetsToTimelineTweets } from "@/lib/tweets/map-tweet";
 
 /**
@@ -26,19 +27,29 @@ export async function getMyProfile(options?: {
     throw new Error("ユーザー情報の取得に失敗しました");
   }
 
-  const profile = await getUserProfile(user.id);
+  const [profile, retweetedTweetIds] = await Promise.all([
+    getUserProfile(user.id),
+    getRetweetedTweetIds(),
+  ]);
   const avatarUrl = profile?.image_url || undefined;
 
   return {
     profile: mapProfileToView(profile, user.email),
     timeline: {
+      // 一覧はすべてログイン中ユーザーの投稿なので、投稿者情報は自分の分だけで足りる
       tweets: mapApiTweetsToTimelineTweets(
         response.tweets ?? [],
-        user,
-        avatarUrl,
+        new Map([[user.id, user]]),
+        {
+          avatarUrlsById: avatarUrl
+            ? new Map([[user.id, avatarUrl]])
+            : undefined,
+          retweetedTweetIds,
+        },
       ),
       hasMore: response.has_more ?? false,
       nextCursor: response.next_cursor ?? null,
+      currentUserId: user.id,
       viewerAvatarUrl: avatarUrl,
     },
   };

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import type { Tweet } from "@/lib/types/tweet";
+import { RetweetButton } from "@/components/home/retweet-button";
 import { TweetMenu } from "@/components/home/tweet-menu";
 import { FaComment } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
@@ -52,7 +53,17 @@ function TweetCard({
   onDeleted,
   redirectAfterDelete,
 }: TweetCardProps) {
-  const { author, content, imageUrl, timestamp, createdAt, stats } = tweet;
+  const {
+    author,
+    content,
+    imageUrl,
+    timestamp,
+    createdAt,
+    retweetCount,
+    isRetweeted,
+    retweetedBy,
+    stats,
+  } = tweet;
   const router = useRouter();
 
   // 自分のポストのときだけ削除メニューを出す（他人のポストはバックエンドでも削除不可）
@@ -78,6 +89,14 @@ function TweetCard({
       }}
       className="cursor-pointer border-b border-[#2f3336] px-4 py-3 transition-colors hover:bg-[#080808]"
     >
+      {retweetedBy && (
+        // アバターの幅（size-10 + gap-3）だけ字下げして本文の行頭に揃える
+        <p className="mb-1 flex items-center gap-2 pl-[52px] text-[13px] font-bold text-[#71767b]">
+          <CiRepeat className="size-4 shrink-0" aria-hidden />
+          {retweetedBy}さんがリポストしました
+        </p>
+      )}
+
       <div className="flex gap-3">
         {/* 画像の実サイズに引きずられないよう表示サイズを固定する */}
         <div className="size-10 shrink-0 overflow-hidden rounded-full bg-[#333639]">
@@ -159,12 +178,14 @@ function TweetCard({
               >
                 <FaComment />
               </TweetAction>
-              <TweetAction
-                label={`リポスト ${stats.reposts}件`}
-                count={stats.reposts}
-              >
-                <CiRepeat />
-              </TweetAction>
+              {/* ボタンは押した直後の状態を自前で持つので、
+                  サーバー側の値が変わったらkeyを変えて作り直す */}
+              <RetweetButton
+                key={`${tweet.id}-${isRetweeted}-${retweetCount}`}
+                tweetId={tweet.id}
+                count={retweetCount}
+                retweeted={isRetweeted}
+              />
               <TweetAction
                 label={`いいね ${stats.likes}件`}
                 count={stats.likes}

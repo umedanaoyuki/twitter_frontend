@@ -23,6 +23,11 @@ export type DeleteTweetResponse =
   components["schemas"]["controllers.StatusOKResponse"];
 export type GetUserTweetsResponse =
   components["schemas"]["controllers.GetUserTweetsResponse"];
+// バックエンドの POST/DELETE /tweets/{id}/retweet は controllers.StatusOKResponse を返す
+export type RetweetResponse =
+  components["schemas"]["controllers.StatusOKResponse"];
+export type GetUserRetweetsResponse =
+  components["schemas"]["controllers.GetUserRetweetsResponse"];
 export type GetTweetResponse =
   components["schemas"]["controllers.GetTweetResponse"];
 export type GetCurrentUserTweetsResponse =

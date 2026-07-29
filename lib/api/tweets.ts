@@ -11,9 +11,11 @@ import type {
   GetAllTweetsResponse,
   GetCurrentUserTweetsResponse,
   GetTweetResponse,
+  GetUserRetweetsResponse,
   GetUserTweetsResponse,
   PresignImageTweetInput,
   PresignImageTweetResponse,
+  RetweetResponse,
 } from "./types";
 
 export async function createTweet(
@@ -138,6 +140,73 @@ export async function getUserTweets(
 ): Promise<GetUserTweetsResponse> {
   const { data, error, response } = await apiClient.GET(
     "/users/{user_id}/tweets",
+    {
+      params: {
+        path: { user_id: userId },
+        query: {
+          cursor: options?.cursor,
+          limit: options?.limit ?? 20,
+        },
+      },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** 指定ツイートをリツイートする */
+export async function retweetTweet(tweetId: number): Promise<RetweetResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.POST(
+    "/tweets/{id}/retweet",
+    {
+      params: {
+        path: { id: tweetId },
+      },
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** 指定ツイートのリツイートを解除する */
+export async function undoRetweetTweet(
+  tweetId: number,
+): Promise<RetweetResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.DELETE(
+    "/tweets/{id}/retweet",
+    {
+      params: {
+        path: { id: tweetId },
+      },
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** 指定ユーザーがリツイートしたツイート一覧を取得する（認証不要） */
+export async function getUserRetweets(
+  userId: number,
+  options?: { cursor?: number; limit?: number },
+): Promise<GetUserRetweetsResponse> {
+  const { data, error, response } = await apiClient.GET(
+    "/users/{user_id}/retweets",
     {
       params: {
         path: { user_id: userId },
