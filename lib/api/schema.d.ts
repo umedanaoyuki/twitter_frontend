@@ -2785,8 +2785,6 @@ export interface components {
             tweet?: components["schemas"]["controllers.SwaggerTweet"];
         };
         "controllers.SwaggerTweet": {
-            /** @example 0 */
-            comment_count?: number;
             /** @example Hello, world! */
             content?: string;
             /** @example 2024-01-01T00:00:00Z */
