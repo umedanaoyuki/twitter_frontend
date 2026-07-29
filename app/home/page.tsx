@@ -19,6 +19,7 @@ export default async function Home() {
           tweets: [],
           hasMore: false,
           nextCursor: null,
+          currentUserId: null,
         }
       }
       timelineError={
