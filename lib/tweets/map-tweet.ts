@@ -29,7 +29,6 @@ export function mapApiTweetToTweet(
     imageUrl: apiTweet.image_url || undefined,
     timestamp: formatRelativeTime(createdAt),
     createdAt,
-    commentCount: apiTweet.comment_count ?? 0,
     stats: {
       reposts: formatCount(apiTweet.retweet_count ?? 0),
       likes: formatCount(apiTweet.like_count ?? 0),
