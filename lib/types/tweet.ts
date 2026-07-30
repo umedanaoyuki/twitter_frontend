@@ -12,8 +12,6 @@ export type Tweet = {
   imageUrl?: string;
   timestamp: string;
   createdAt: string;
-  /** コメント（返信）件数 */
-  commentCount: number;
   stats: {
     reposts: string;
     likes: string;
