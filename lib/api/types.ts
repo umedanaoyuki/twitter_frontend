@@ -33,6 +33,8 @@ export type GetUserResponse =
   components["schemas"]["controllers.GetUserResponse"];
 export type StatusOKResponse =
   components["schemas"]["controllers.StatusOKResponse"];
+export type MessageResponse =
+  components["schemas"]["controllers.MessageResponse"];
 export type SwaggerUserProfile =
   components["schemas"]["controllers.SwaggerUserProfile"];
 export type UserProfileResponse =
