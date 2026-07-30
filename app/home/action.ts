@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getHomeTimeline } from "@/lib/tweets/get-timeline";
 import { deleteAccount } from "@/lib/api/users";
+import { logout } from "@/lib/api/auth";
 import type { Tweet } from "@/lib/types/tweet";
 import { validateTweetContent } from "@/lib/validation/tweet";
 import { clearAuthCookies } from "@/lib/session";
@@ -31,6 +32,10 @@ export type LoadMoreTweetsState =
     };
 
 export type DeleteAccountState =
+  | { error: string }
+  | { success: true; message: string };
+
+export type LogoutState =
   | { error: string }
   | { success: true; message: string };
 
@@ -121,6 +126,19 @@ export async function loadMoreTweetsAction(
     return {
       error:
         error instanceof Error ? error.message : "投稿の取得に失敗しました",
+    };
+  }
+}
+
+export async function logoutAction(): Promise<LogoutState> {
+  try {
+    await logout();
+    await clearAuthCookies();
+    return { success: true, message: "ログアウトしました" };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "ログアウトに失敗しました",
     };
   }
 }
