@@ -1,5 +1,7 @@
 export type Tweet = {
   id: string;
+  /** 投稿者のユーザーID。ログイン中のユーザーと比較して削除可否を判定する */
+  authorId: number | null;
   author: {
     name: string;
     handle: string;
@@ -23,6 +25,6 @@ export type TweetTimelineData = {
   tweets: Tweet[];
   hasMore: boolean;
   nextCursor: number | null;
-  /** ログイン中ユーザーのプロフィール画像URL（投稿フォームのアイコン用） */
-  viewerAvatarUrl?: string;
+  /** ログイン中のユーザーID。未ログインなら null */
+  currentUserId: number | null;
 };

@@ -4,15 +4,14 @@ import { HomeMobileNav } from "@/components/home/home-mobile-nav";
 import { HomeRightPanel } from "@/components/home/home-right-panel";
 import { HomeSidebar } from "@/components/home/home-sidebar";
 import { TweetDetailContent } from "@/components/home/tweet-detail-content";
-import type { CommentListData } from "@/lib/types/comment";
-import type { Tweet } from "@/lib/types/tweet";
+import type { TweetDetail } from "@/lib/tweets/get-tweet-detail";
 
 type TweetDetailViewProps = {
-  tweet: Tweet;
-  commentList: CommentListData;
+  tweetDetail: TweetDetail;
+  currentUserId?: number | null;
 };
 
-function TweetDetailView({ tweet, commentList }: TweetDetailViewProps) {
+function TweetDetailView({ tweetDetail, currentUserId }: TweetDetailViewProps) {
   return (
     <div className="home-page font-chirp min-h-dvh w-full bg-black text-[#e7e9ea]">
       <div className="mx-auto flex min-h-dvh w-full max-w-[1280px] justify-center">
@@ -42,7 +41,10 @@ function TweetDetailView({ tweet, commentList }: TweetDetailViewProps) {
             <h1 className="text-xl font-bold text-[#e7e9ea]">ポスト</h1>
           </header>
 
-          <TweetDetailContent tweet={tweet} commentList={commentList} />
+          <TweetDetailContent
+            tweetDetail={tweetDetail}
+            currentUserId={currentUserId}
+          />
         </main>
 
         <div className="hidden w-[350px] shrink-0 lg:block">
