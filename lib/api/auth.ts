@@ -1,8 +1,11 @@
+import { requireSessionCookieHeader } from "@/lib/session";
+
 import { apiClient } from "@/lib/api/client";
 import { getApiErrorMessage } from "@/lib/api/errors";
 import type {
   LoginInput,
   LoginResponse,
+  MessageResponse,
   RegisterInput,
   RegisterResponse,
 } from "@/lib/api/types";
@@ -41,4 +44,17 @@ export async function login(input: LoginInput): Promise<LoginResult> {
     data,
     setCookieHeaders: response.headers.getSetCookie(),
   };
+}
+
+export async function logout(): Promise<MessageResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.POST("/logout", {
+    headers: { Cookie: cookieHeader },
+  });
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
 }

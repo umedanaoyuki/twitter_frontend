@@ -8,6 +8,7 @@ import { MdOutlineMailOutline } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { IoIosMore } from "react-icons/io";
 import { DeleteAccountButton } from "@/components/home/delete-account-button";
+import { LogoutButton } from "@/components/home/logout-button";
 import { XLogoMark } from "@/components/home/x-logo-mark";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +25,12 @@ type NavDeleteItem = {
   label: string;
 };
 
-type NavItem = NavLinkItem | NavDeleteItem;
+type NavLogoutItem = {
+  type: "logout";
+  label: string;
+};
+
+type NavItem = NavLinkItem | NavDeleteItem | NavLogoutItem;
 
 const navItems: NavItem[] = [
   {
@@ -59,6 +65,10 @@ const navItems: NavItem[] = [
     icon: <CgProfile className="size-[26px]" />,
   },
   {
+    type: "logout",
+    label: "ログアウト",
+  },
+  {
     type: "delete",
     label: "退会",
   },
@@ -78,6 +88,10 @@ function HomeSidebar() {
 
         <nav aria-label="メインメニュー" className="mt-1 flex flex-col">
           {navItems.map((item) => {
+            if (item.type === "logout") {
+              return <LogoutButton key={item.label} label={item.label} />;
+            }
+
             if (item.type === "delete") {
               return (
                 <DeleteAccountButton key={item.label} label={item.label} />
