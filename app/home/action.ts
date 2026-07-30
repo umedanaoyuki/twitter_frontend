@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getHomeTimeline } from "@/lib/tweets/get-timeline";
 import { deleteAccount } from "@/lib/api/users";
+import { logout } from "@/lib/api/auth";
 import type { Tweet } from "@/lib/types/tweet";
 import { validateTweetContent } from "@/lib/validation/tweet";
 import { clearAuthCookies } from "@/lib/session";
@@ -44,6 +45,10 @@ export type DeleteTweetState =
 export type ToggleRetweetState =
   | { error: string }
   | { success: true; retweeted: boolean; message: string };
+
+export type LogoutState =
+  | { error: string }
+  | { success: true; message: string };
 
 export async function presignTweetImageAction(
   contentType: string,
@@ -192,6 +197,19 @@ export async function toggleRetweetAction(
           : retweeted
             ? "リポストに失敗しました"
             : "リポストの取り消しに失敗しました",
+    };
+  }
+}
+
+export async function logoutAction(): Promise<LogoutState> {
+  try {
+    await logout();
+    await clearAuthCookies();
+    return { success: true, message: "ログアウトしました" };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "ログアウトに失敗しました",
     };
   }
 }
