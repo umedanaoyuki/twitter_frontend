@@ -10,11 +10,14 @@ export default async function TweetDetailPage({
   params,
 }: TweetDetailPageProps) {
   const { id } = await params;
+
   // 2つのAPIは互いに依存しないので並列に取得する
-  const [tweet, currentUserId] = await Promise.all([
+  const [tweetDetail, currentUserId] = await Promise.all([
     getTweetDetail(id),
     getCurrentUserId(),
   ]);
 
-  return <TweetDetailView tweet={tweet} currentUserId={currentUserId} />;
+  return (
+    <TweetDetailView tweetDetail={tweetDetail} currentUserId={currentUserId} />
+  );
 }
