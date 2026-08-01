@@ -13,7 +13,6 @@ export type Tweet = {
   timestamp: string;
   createdAt: string;
   stats: {
-    replies: string;
     reposts: string;
     likes: string;
     views: string;
@@ -26,4 +25,6 @@ export type TweetTimelineData = {
   nextCursor: number | null;
   /** ログイン中のユーザーID。未ログインなら null */
   currentUserId: number | null;
+  /** 投稿フォームに表示するログイン中ユーザーのアイコンURL */
+  viewerAvatarUrl?: string;
 };

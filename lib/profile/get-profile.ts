@@ -3,7 +3,7 @@ import { getCurrentUserTweets } from "@/lib/api/tweets";
 import { getSessionCookieHeader } from "@/lib/session";
 import type { ProfilePageData } from "@/lib/types/profile";
 import { mapProfileToView } from "@/lib/profile/map-profile";
-import { mapApiTweetsToTimelineTweets } from "@/lib/tweets/map-tweet";
+import { mapApiTweetToTweet } from "@/lib/tweets/map-tweet";
 
 /**
  * ログイン中のユーザーのプロフィール画面データを取得する。
@@ -32,13 +32,13 @@ export async function getMyProfile(options?: {
   return {
     profile: mapProfileToView(profile, user.email),
     timeline: {
-      tweets: mapApiTweetsToTimelineTweets(
-        response.tweets ?? [],
-        user,
-        avatarUrl,
+      // プロフィール画面のツイートはすべて本人のものなので、投稿者情報は使い回す
+      tweets: (response.tweets ?? []).map((apiTweet) =>
+        mapApiTweetToTweet(apiTweet, user, avatarUrl),
       ),
       hasMore: response.has_more ?? false,
       nextCursor: response.next_cursor ?? null,
+      currentUserId: user.id,
       viewerAvatarUrl: avatarUrl,
     },
   };

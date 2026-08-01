@@ -3,15 +3,15 @@ import Link from "next/link";
 import { HomeMobileNav } from "@/components/home/home-mobile-nav";
 import { HomeRightPanel } from "@/components/home/home-right-panel";
 import { HomeSidebar } from "@/components/home/home-sidebar";
-import { TweetCard } from "@/components/home/tweet-card";
-import type { Tweet } from "@/lib/types/tweet";
+import { TweetDetailContent } from "@/components/home/tweet-detail-content";
+import type { TweetDetail } from "@/lib/tweets/get-tweet-detail";
 
 type TweetDetailViewProps = {
-  tweet: Tweet;
+  tweetDetail: TweetDetail;
   currentUserId?: number | null;
 };
 
-function TweetDetailView({ tweet, currentUserId }: TweetDetailViewProps) {
+function TweetDetailView({ tweetDetail, currentUserId }: TweetDetailViewProps) {
   return (
     <div className="home-page font-chirp min-h-dvh w-full bg-black text-[#e7e9ea]">
       <div className="mx-auto flex min-h-dvh w-full max-w-[1280px] justify-center">
@@ -41,10 +41,9 @@ function TweetDetailView({ tweet, currentUserId }: TweetDetailViewProps) {
             <h1 className="text-xl font-bold text-[#e7e9ea]">ポスト</h1>
           </header>
 
-          <TweetCard
-            tweet={tweet}
+          <TweetDetailContent
+            tweetDetail={tweetDetail}
             currentUserId={currentUserId}
-            redirectAfterDelete="/home"
           />
         </main>
 

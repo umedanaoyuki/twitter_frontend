@@ -10,6 +10,8 @@ export function mapApiTweetToTweet(
   apiTweet: ApiTweet,
   /** 投稿者の情報。取得できなかった場合は user{user_id} を表示名にフォールバックする */
   user?: SwaggerUserDetail | null,
+  /** 投稿者のプロフィール画像URL（ツイートAPIには含まれないため呼び出し側から渡す） */
+  avatarUrl?: string,
 ): Tweet {
   const email = user?.email ?? `user${apiTweet.user_id ?? ""}`;
   const displayName = emailToDisplayName(email);
@@ -21,13 +23,13 @@ export function mapApiTweetToTweet(
     author: {
       name: displayName,
       handle: displayName,
+      avatarUrl: avatarUrl || undefined,
     },
     content: apiTweet.content ?? "",
     imageUrl: apiTweet.image_url || undefined,
     timestamp: formatRelativeTime(createdAt),
     createdAt,
     stats: {
-      replies: "0",
       reposts: formatCount(apiTweet.retweet_count ?? 0),
       likes: formatCount(apiTweet.like_count ?? 0),
       views: "0",

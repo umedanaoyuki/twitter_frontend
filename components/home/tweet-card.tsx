@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+import { CommentDialog } from "@/components/home/comment-dialog";
+import type { Comment } from "@/lib/types/comment";
 import type { Tweet } from "@/lib/types/tweet";
 import { TweetMenu } from "@/components/home/tweet-menu";
 import { FaComment } from "react-icons/fa";
@@ -12,6 +15,7 @@ import { CiRepeat } from "react-icons/ci";
 
 type TweetCardProps = {
   tweet: Tweet;
+  onCommented?: (comment: Comment) => void;
   /** ログイン中のユーザーID。投稿者と一致するときだけ操作メニューを表示する */
   currentUserId?: number | null;
   /** 一覧側で削除されたポストを即座に消すためのコールバック */
@@ -23,25 +27,30 @@ type TweetCardProps = {
 function TweetAction({
   label,
   count,
+  onClick,
   children,
 }: {
   label: string;
-  count: string;
+  count?: string;
+  onClick?: () => void;
   children: ReactNode;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
-      onClick={(event: MouseEvent<HTMLButtonElement>) =>
-        event.stopPropagation()
-      }
+      onClick={(event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        onClick?.();
+      }}
       className="group flex items-center gap-1 text-[#71767b] transition-colors hover:text-[#1d9bf0]"
     >
       <span className="flex size-[34px] items-center justify-center rounded-full transition-colors group-hover:bg-[#1d9bf0]/10">
         {children}
       </span>
-      <span className="min-w-[1ch] text-[13px] tabular-nums">{count}</span>
+      {count ? (
+        <span className="min-w-[1ch] text-[13px] tabular-nums">{count}</span>
+      ) : null}
     </button>
   );
 }
@@ -50,10 +59,12 @@ function TweetCard({
   tweet,
   currentUserId,
   onDeleted,
+  onCommented,
   redirectAfterDelete,
 }: TweetCardProps) {
   const { author, content, imageUrl, timestamp, createdAt, stats } = tweet;
   const router = useRouter();
+  const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
 
   // 自分のポストのときだけ削除メニューを出す（他人のポストはバックエンドでも削除不可）
   const isOwnTweet =
@@ -70,11 +81,18 @@ function TweetCard({
       role="link"
       tabIndex={0}
       aria-label="ポストの詳細を見る"
-      onClick={navigateToDetail}
+      onClick={(event: MouseEvent<HTMLElement>) => {
+        // Portal(モーダル)内のイベントはDOM上は外側でもReactツリー上はここへ伝播するため、
+        // 実際にカード内から発生したものだけを遷移として扱う
+        if (!event.currentTarget.contains(event.target as Node)) return;
+        navigateToDetail();
+      }}
       onKeyDown={(event: KeyboardEvent<HTMLElement>) => {
-        if (event.key === "Enter") {
-          navigateToDetail();
+        // role="link" のカード自身にフォーカスがある場合のみ遷移する
+        if (event.key !== "Enter" || event.target !== event.currentTarget) {
+          return;
         }
+        navigateToDetail();
       }}
       className="cursor-pointer border-b border-[#2f3336] px-4 py-3 transition-colors hover:bg-[#080808]"
     >
@@ -154,8 +172,8 @@ function TweetCard({
           <div className="mt-3 grid max-w-[425px] grid-cols-5">
             <div className="col-span-3 flex justify-between text-[#71767b]">
               <TweetAction
-                label={`返信 ${stats.replies}件`}
-                count={stats.replies}
+                label="返信"
+                onClick={() => setIsCommentDialogOpen(true)}
               >
                 <FaComment />
               </TweetAction>
@@ -175,6 +193,13 @@ function TweetCard({
           </div>
         </div>
       </div>
+
+      <CommentDialog
+        tweet={tweet}
+        open={isCommentDialogOpen}
+        onOpenChange={setIsCommentDialogOpen}
+        onCommented={onCommented}
+      />
     </article>
   );
 }
