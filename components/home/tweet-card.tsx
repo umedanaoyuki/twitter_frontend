@@ -190,7 +190,7 @@ function TweetCard({
             </div>
           ) : null}
 
-          <div className="mt-3 grid max-w-[425px] grid-cols-5">
+          <div className="mt-3 grid max-w-[425px]">
             <div className="col-span-3 flex justify-between text-[#71767b]">
               <TweetAction
                 label="返信"
@@ -212,8 +212,6 @@ function TweetCard({
               >
                 <IoMdHeartEmpty />
               </TweetAction>
-            </div>
-            <div className="col-span-2 flex justify-end">
               {/* リポストと同じく、サーバー側の値が変わったらkeyを変えて作り直す */}
               <BookmarkButton
                 key={`${tweet.id}-${isBookmarked}`}
