@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { getUserProfile } from "@/lib/api/profile";
 import { getCurrentUserTweets } from "@/lib/api/tweets";
 import { getSessionCookieHeader } from "@/lib/session";
@@ -59,14 +61,38 @@ export async function getMyProfile(options?: {
  * 指定ユーザーのプロフィール画像URLを取得する。
  * アイコンは表示上の付加情報なので、未作成・取得失敗時は undefined を返して
  * 呼び出し元（タイムライン等）の表示を止めない。
+ *
+ * タイムラインでは同じ投稿者のツイートが複数並ぶため、cache() で包んで
+ * 同一リクエスト内の重複アクセスを1回にまとめている。
  */
-export async function getProfileImageUrl(
-  userId: number,
-): Promise<string | undefined> {
-  try {
-    const profile = await getUserProfile(userId);
-    return profile?.image_url || undefined;
-  } catch {
-    return undefined;
-  }
+export const getProfileImageUrl = cache(
+  async (userId: number): Promise<string | undefined> => {
+    try {
+      const profile = await getUserProfile(userId);
+      return profile?.image_url || undefined;
+    } catch {
+      return undefined;
+    }
+  },
+);
+
+/**
+ * 複数ユーザーのアイコンURLをまとめて取得し、user_id をキーにしたMapで返す。
+ * アイコン未設定・取得失敗のユーザーはMapに含めない。
+ */
+export async function getAvatarUrlsByIds(
+  userIds: number[],
+): Promise<Map<number, string>> {
+  const uniqueIds = [...new Set(userIds)];
+  const avatarUrls = await Promise.all(
+    uniqueIds.map((userId) => getProfileImageUrl(userId)),
+  );
+
+  const avatarUrlsById = new Map<number, string>();
+  uniqueIds.forEach((userId, index) => {
+    const avatarUrl = avatarUrls[index];
+    if (avatarUrl) avatarUrlsById.set(userId, avatarUrl);
+  });
+
+  return avatarUrlsById;
 }
