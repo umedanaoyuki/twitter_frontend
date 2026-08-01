@@ -229,6 +229,7 @@ export async function toggleBookmarkAction(
 
     revalidatePath("/home");
     revalidatePath("/profile");
+    revalidatePath("/bookmarks");
     revalidatePath(`/tweets/${id}`);
 
     return {
