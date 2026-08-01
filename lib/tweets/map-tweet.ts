@@ -10,8 +10,14 @@ export function mapApiTweetToTweet(
   apiTweet: ApiTweet,
   /** 投稿者の情報。取得できなかった場合は user{user_id} を表示名にフォールバックする */
   user?: SwaggerUserDetail | null,
-  /** 投稿者のプロフィール画像URL（ツイートAPIには含まれないため呼び出し側から渡す） */
+  /** 投稿者のアイコンURL。未設定なら省略する */
   avatarUrl?: string,
+  options?: {
+    /** ログイン中のユーザーがリツイート済みかどうか */
+    isRetweeted?: boolean;
+    /** リツイートとして並べる場合の、リツイートした人の表示名 */
+    retweetedBy?: string;
+  },
 ): Tweet {
   const email = user?.email ?? `user${apiTweet.user_id ?? ""}`;
   const displayName = emailToDisplayName(email);
@@ -23,14 +29,17 @@ export function mapApiTweetToTweet(
     author: {
       name: displayName,
       handle: displayName,
-      avatarUrl: avatarUrl || undefined,
+      avatarUrl,
     },
     content: apiTweet.content ?? "",
     imageUrl: apiTweet.image_url || undefined,
     timestamp: formatRelativeTime(createdAt),
     createdAt,
+    retweetCount: apiTweet.retweet_count ?? 0,
+    isRetweeted: options?.isRetweeted ?? false,
+    retweetedBy: options?.retweetedBy,
     stats: {
-      reposts: formatCount(apiTweet.retweet_count ?? 0),
+      replies: "0",
       likes: formatCount(apiTweet.like_count ?? 0),
       views: "0",
     },
@@ -44,11 +53,28 @@ export function mapApiTweetToTweet(
 export function mapApiTweetsToTimelineTweets(
   apiTweets: ApiTweet[],
   usersById: Map<number, SwaggerUserDetail>,
+  options?: {
+    /** user_id をキーにした投稿者のアイコンURL */
+    avatarUrlsById?: Map<number, string>;
+    /** ログイン中のユーザーがリツイート済みのツイートID */
+    retweetedTweetIds?: Set<number>;
+    /** リツイートとして並べる場合の、リツイートした人の表示名（全件に付与する） */
+    retweetedBy?: string;
+  },
 ): Tweet[] {
   return apiTweets.map((apiTweet) =>
     mapApiTweetToTweet(
       apiTweet,
       apiTweet.user_id != null ? usersById.get(apiTweet.user_id) : null,
+      apiTweet.user_id != null
+        ? options?.avatarUrlsById?.get(apiTweet.user_id)
+        : undefined,
+      {
+        isRetweeted:
+          apiTweet.id != null &&
+          (options?.retweetedTweetIds?.has(apiTweet.id) ?? false),
+        retweetedBy: options?.retweetedBy,
+      },
     ),
   );
 }

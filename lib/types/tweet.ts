@@ -12,8 +12,17 @@ export type Tweet = {
   imageUrl?: string;
   timestamp: string;
   createdAt: string;
+  /** リツイート数。ボタン操作で増減させるので整形前の数値で保持する */
+  retweetCount: number;
+  /** ログイン中のユーザーがこのツイートをリツイート済みかどうか */
+  isRetweeted: boolean;
+  /**
+   * リツイートとしてタイムラインに並べている場合の、リツイートした人の表示名。
+   * 通常の投稿として並んでいる場合は undefined。
+   */
+  retweetedBy?: string;
   stats: {
-    reposts: string;
+    replies: string;
     likes: string;
     views: string;
   };
@@ -25,6 +34,6 @@ export type TweetTimelineData = {
   nextCursor: number | null;
   /** ログイン中のユーザーID。未ログインなら null */
   currentUserId: number | null;
-  /** 投稿フォームに表示するログイン中ユーザーのアイコンURL */
+  /** 投稿フォームに表示するログイン中ユーザーのアイコン */
   viewerAvatarUrl?: string;
 };

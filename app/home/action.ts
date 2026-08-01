@@ -12,6 +12,8 @@ import {
   createTweet,
   deleteTweet,
   presignTweetImage,
+  retweetTweet,
+  undoRetweetTweet,
 } from "@/lib/api/tweets";
 
 export type PostTweetState =
@@ -39,6 +41,10 @@ export type DeleteAccountState =
 export type DeleteTweetState =
   | { error: string }
   | { success: true; message: string };
+
+export type ToggleRetweetState =
+  | { error: string }
+  | { success: true; retweeted: boolean; message: string };
 
 export type LogoutState =
   | { error: string }
@@ -150,6 +156,47 @@ export async function deleteTweetAction(
   } catch (error) {
     return {
       error: error instanceof Error ? error.message : "削除に失敗しました",
+    };
+  }
+}
+
+/**
+ * リツイートの実行・解除を切り替える。
+ * @param retweeted 切り替え後の状態（true でリツイート、false で解除）
+ */
+export async function toggleRetweetAction(
+  tweetId: string,
+  retweeted: boolean,
+): Promise<ToggleRetweetState> {
+  const id = Number(tweetId);
+  if (!Number.isInteger(id) || id <= 0) {
+    return { error: "ポストの指定が正しくありません" };
+  }
+
+  try {
+    if (retweeted) {
+      await retweetTweet(id);
+    } else {
+      await undoRetweetTweet(id);
+    }
+
+    revalidatePath("/home");
+    revalidatePath("/profile");
+    revalidatePath(`/tweets/${id}`);
+
+    return {
+      success: true,
+      retweeted,
+      message: retweeted ? "リポストしました" : "リポストを取り消しました",
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : retweeted
+            ? "リポストに失敗しました"
+            : "リポストの取り消しに失敗しました",
     };
   }
 }

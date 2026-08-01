@@ -3,7 +3,8 @@ import { getCurrentUserTweets } from "@/lib/api/tweets";
 import { getSessionCookieHeader } from "@/lib/session";
 import type { ProfilePageData } from "@/lib/types/profile";
 import { mapProfileToView } from "@/lib/profile/map-profile";
-import { mapApiTweetToTweet } from "@/lib/tweets/map-tweet";
+import { getRetweetedTweetIds } from "@/lib/tweets/get-my-retweets";
+import { mapApiTweetsToTimelineTweets } from "@/lib/tweets/map-tweet";
 
 /**
  * ログイン中のユーザーのプロフィール画面データを取得する。
@@ -26,15 +27,25 @@ export async function getMyProfile(options?: {
     throw new Error("ユーザー情報の取得に失敗しました");
   }
 
-  const profile = await getUserProfile(user.id);
+  const [profile, retweetedTweetIds] = await Promise.all([
+    getUserProfile(user.id),
+    getRetweetedTweetIds(),
+  ]);
   const avatarUrl = profile?.image_url || undefined;
 
   return {
     profile: mapProfileToView(profile, user.email),
     timeline: {
-      // プロフィール画面のツイートはすべて本人のものなので、投稿者情報は使い回す
-      tweets: (response.tweets ?? []).map((apiTweet) =>
-        mapApiTweetToTweet(apiTweet, user, avatarUrl),
+      // 一覧はすべてログイン中ユーザーの投稿なので、投稿者情報は自分の分だけで足りる
+      tweets: mapApiTweetsToTimelineTweets(
+        response.tweets ?? [],
+        new Map([[user.id, user]]),
+        {
+          avatarUrlsById: avatarUrl
+            ? new Map([[user.id, avatarUrl]])
+            : undefined,
+          retweetedTweetIds,
+        },
       ),
       hasMore: response.has_more ?? false,
       nextCursor: response.next_cursor ?? null,

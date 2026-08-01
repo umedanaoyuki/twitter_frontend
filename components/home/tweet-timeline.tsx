@@ -22,9 +22,13 @@ function TweetTimeline({
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const isLoadingRef = useRef(false);
 
-  const tweets = [...initialTweets, ...extraTweets].filter(
-    (tweet) => !deletedIds.includes(tweet.id),
-  );
+  // リツイートは先頭にも並ぶので、続きを読み込んだときに同じポストが重複しないよう取り除く
+  const seenIds = new Set<string>();
+  const tweets = [...initialTweets, ...extraTweets].filter((tweet) => {
+    if (deletedIds.includes(tweet.id) || seenIds.has(tweet.id)) return false;
+    seenIds.add(tweet.id);
+    return true;
+  });
 
   const handleDeleted = useCallback((tweetId: string) => {
     setDeletedIds((current) => [...current, tweetId]);
