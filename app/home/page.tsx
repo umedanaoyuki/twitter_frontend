@@ -12,8 +12,6 @@ export default async function Home() {
       error instanceof Error ? error.message : "投稿一覧の取得に失敗しました";
   }
 
-  console.log("timeline", timeline);
-
   return (
     <HomeTimeline
       timeline={
