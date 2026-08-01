@@ -1,4 +1,8 @@
 import { getAllTweets } from "@/lib/api/tweets";
+import {
+  getAvatarUrlsByIds,
+  getProfileImageUrl,
+} from "@/lib/profile/get-profile";
 import { getSessionCookieHeader } from "@/lib/session";
 import type { TweetTimelineData } from "@/lib/types/tweet";
 import { emailToDisplayName } from "@/lib/tweets/format";
@@ -54,13 +58,20 @@ export async function getHomeTimeline(options?: {
   const authorIds = [...(isFirstPage ? pinnedRetweets : []), ...apiTweets]
     .map((apiTweet) => apiTweet.user_id)
     .filter((userId): userId is number => userId != null);
-  const usersById = await getUsersByIds(authorIds);
+  // アイコンURLはツイートAPIに含まれないので、投稿者のプロフィールから別途集める。
+  // 投稿フォーム用のアイコンは、自分が未投稿だと avatarUrlsById に載らないので個別に引く
+  const [usersById, avatarUrlsById, viewerAvatarUrl] = await Promise.all([
+    getUsersByIds(authorIds),
+    getAvatarUrlsByIds(authorIds),
+    currentUser?.id ? getProfileImageUrl(currentUser.id) : undefined,
+  ]);
 
   const retweetedBy = currentUser?.email
     ? emailToDisplayName(currentUser.email)
     : "あなた";
   const pinnedTweets = isFirstPage
     ? mapApiTweetsToTimelineTweets(pinnedRetweets, usersById, {
+        avatarUrlsById,
         retweetedTweetIds,
         retweetedBy,
       })
@@ -70,11 +81,13 @@ export async function getHomeTimeline(options?: {
     tweets: [
       ...pinnedTweets,
       ...mapApiTweetsToTimelineTweets(apiTweets, usersById, {
+        avatarUrlsById,
         retweetedTweetIds,
       }),
     ],
     hasMore: response.has_more ?? false,
     nextCursor: response.next_cursor ?? null,
     currentUserId: currentUser?.id ?? null,
+    viewerAvatarUrl,
   };
 }

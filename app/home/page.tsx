@@ -2,7 +2,7 @@ import { HomeTimeline } from "@/components/home/home-timeline";
 import { getHomeTimeline } from "@/lib/tweets/get-timeline";
 
 export default async function Home() {
-  let timeline = null;
+  let timeline: Awaited<ReturnType<typeof getHomeTimeline>> | null = null;
   let timelineError: string | null = null;
 
   try {
