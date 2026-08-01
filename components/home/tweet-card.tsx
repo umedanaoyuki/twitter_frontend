@@ -197,16 +197,14 @@ function TweetCard({
               >
                 <FaComment />
               </TweetAction>
-              {/* ボタンは押した直後の状態を自前で持つので、
-                  サーバー側の値が変わったらkeyを変えて作り直す */}
               <RetweetButton
-                key={`${tweet.id}-${isRetweeted}-${retweetCount}`}
+                key={`retweet-${tweet.id}-${isRetweeted}-${retweetCount}`}
                 tweetId={tweet.id}
                 count={retweetCount}
                 retweeted={isRetweeted}
               />
               <LikeButton
-                key={`${tweet.id}-${isLiked}-${likeCount}`}
+                key={`like-${tweet.id}-${isLiked}-${likeCount}`}
                 tweetId={tweet.id}
                 count={likeCount}
                 liked={isLiked}
