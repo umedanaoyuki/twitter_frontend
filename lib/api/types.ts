@@ -28,6 +28,10 @@ export type RetweetResponse =
   components["schemas"]["controllers.StatusOKResponse"];
 export type GetUserRetweetsResponse =
   components["schemas"]["controllers.GetUserRetweetsResponse"];
+// バックエンドの POST/DELETE /tweets/{id}/bookmark は controllers.StatusOKResponse を返す
+export type BookmarkResponse =
+  components["schemas"]["controllers.StatusOKResponse"];
+export type ApiBookmark = components["schemas"]["controllers.SwaggerBookmark"];
 export type GetTweetResponse =
   components["schemas"]["controllers.GetTweetResponse"];
 export type GetCurrentUserTweetsResponse =

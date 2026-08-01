@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { CommentDialog } from "@/components/home/comment-dialog";
 import type { Comment } from "@/lib/types/comment";
 import type { Tweet } from "@/lib/types/tweet";
+import { BookmarkButton } from "@/components/home/bookmark-button";
 import { RetweetButton } from "@/components/home/retweet-button";
 import { TweetMenu } from "@/components/home/tweet-menu";
 import { FaComment } from "react-icons/fa";
@@ -71,6 +72,7 @@ function TweetCard({
     createdAt,
     retweetCount,
     isRetweeted,
+    isBookmarked,
     retweetedBy,
     stats,
   } = tweet;
@@ -210,6 +212,14 @@ function TweetCard({
               >
                 <IoMdHeartEmpty />
               </TweetAction>
+            </div>
+            <div className="col-span-2 flex justify-end">
+              {/* リポストと同じく、サーバー側の値が変わったらkeyを変えて作り直す */}
+              <BookmarkButton
+                key={`${tweet.id}-${isBookmarked}`}
+                tweetId={tweet.id}
+                bookmarked={isBookmarked}
+              />
             </div>
           </div>
         </div>

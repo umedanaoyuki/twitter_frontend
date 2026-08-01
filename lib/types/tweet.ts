@@ -16,6 +16,8 @@ export type Tweet = {
   retweetCount: number;
   /** ログイン中のユーザーがこのツイートをリツイート済みかどうか */
   isRetweeted: boolean;
+  /** ログイン中のユーザーがこのツイートをブックマーク済みかどうか */
+  isBookmarked: boolean;
   /**
    * リツイートとしてタイムラインに並べている場合の、リツイートした人の表示名。
    * 通常の投稿として並んでいる場合は undefined。
