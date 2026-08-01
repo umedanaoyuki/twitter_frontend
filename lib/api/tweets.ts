@@ -11,8 +11,10 @@ import type {
   GetAllTweetsResponse,
   GetCurrentUserTweetsResponse,
   GetTweetResponse,
+  GetUserLikesResponse,
   GetUserRetweetsResponse,
   GetUserTweetsResponse,
+  LikeResponse,
   PresignImageTweetInput,
   PresignImageTweetResponse,
   RetweetResponse,
@@ -200,6 +202,43 @@ export async function undoRetweetTweet(
   return data;
 }
 
+/** 指定ツイートにいいねする */
+export async function likeTweet(tweetId: number): Promise<LikeResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.POST("/tweets/{id}/like", {
+    params: {
+      path: { id: tweetId },
+    },
+    headers: { Cookie: cookieHeader },
+  });
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** 指定ツイートのいいねを解除する */
+export async function unlikeTweet(tweetId: number): Promise<LikeResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.DELETE(
+    "/tweets/{id}/like",
+    {
+      params: {
+        path: { id: tweetId },
+      },
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
 /** 指定ユーザーがリツイートしたツイート一覧を取得する（認証不要） */
 export async function getUserRetweets(
   userId: number,
@@ -207,6 +246,31 @@ export async function getUserRetweets(
 ): Promise<GetUserRetweetsResponse> {
   const { data, error, response } = await apiClient.GET(
     "/users/{user_id}/retweets",
+    {
+      params: {
+        path: { user_id: userId },
+        query: {
+          cursor: options?.cursor,
+          limit: options?.limit ?? 20,
+        },
+      },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** 指定ユーザーがいいねしたツイート一覧を取得する（認証不要） */
+export async function getUserLikes(
+  userId: number,
+  options?: { cursor?: number; limit?: number },
+): Promise<GetUserLikesResponse> {
+  const { data, error, response } = await apiClient.GET(
+    "/users/{user_id}/likes",
     {
       params: {
         path: { user_id: userId },

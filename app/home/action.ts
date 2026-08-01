@@ -11,9 +11,11 @@ import {
   completeTweetImage,
   createTweet,
   deleteTweet,
+  likeTweet,
   presignTweetImage,
   retweetTweet,
   undoRetweetTweet,
+  unlikeTweet,
 } from "@/lib/api/tweets";
 
 export type PostTweetState =
@@ -45,6 +47,10 @@ export type DeleteTweetState =
 export type ToggleRetweetState =
   | { error: string }
   | { success: true; retweeted: boolean; message: string };
+
+export type ToggleLikeState =
+  | { error: string }
+  | { success: true; liked: boolean; message: string };
 
 export type LogoutState =
   | { error: string }
@@ -197,6 +203,47 @@ export async function toggleRetweetAction(
           : retweeted
             ? "リポストに失敗しました"
             : "リポストの取り消しに失敗しました",
+    };
+  }
+}
+
+/**
+ * いいねの実行・解除を切り替える。
+ * @param liked 切り替え後の状態（true でいいね、false で解除）
+ */
+export async function toggleLikeAction(
+  tweetId: string,
+  liked: boolean,
+): Promise<ToggleLikeState> {
+  const id = Number(tweetId);
+  if (!Number.isInteger(id) || id <= 0) {
+    return { error: "ポストの指定が正しくありません" };
+  }
+
+  try {
+    if (liked) {
+      await likeTweet(id);
+    } else {
+      await unlikeTweet(id);
+    }
+
+    revalidatePath("/home");
+    revalidatePath("/profile");
+    revalidatePath(`/tweets/${id}`);
+
+    return {
+      success: true,
+      liked,
+      message: liked ? "いいねしました" : "いいねを取り消しました",
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : liked
+            ? "いいねに失敗しました"
+            : "いいねの取り消しに失敗しました",
     };
   }
 }
