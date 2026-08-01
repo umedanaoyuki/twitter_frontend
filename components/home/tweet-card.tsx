@@ -8,10 +8,10 @@ import { useRouter } from "next/navigation";
 import { CommentDialog } from "@/components/home/comment-dialog";
 import type { Comment } from "@/lib/types/comment";
 import type { Tweet } from "@/lib/types/tweet";
+import { LikeButton } from "@/components/home/like-button";
 import { RetweetButton } from "@/components/home/retweet-button";
 import { TweetMenu } from "@/components/home/tweet-menu";
 import { FaComment } from "react-icons/fa";
-import { IoMdHeartEmpty } from "react-icons/io";
 import { CiRepeat } from "react-icons/ci";
 
 type TweetCardProps = {
@@ -72,7 +72,8 @@ function TweetCard({
     retweetCount,
     isRetweeted,
     retweetedBy,
-    stats,
+    likeCount,
+    isLiked,
   } = tweet;
   const router = useRouter();
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
@@ -196,20 +197,18 @@ function TweetCard({
               >
                 <FaComment />
               </TweetAction>
-              {/* ボタンは押した直後の状態を自前で持つので、
-                  サーバー側の値が変わったらkeyを変えて作り直す */}
               <RetweetButton
-                key={`${tweet.id}-${isRetweeted}-${retweetCount}`}
+                key={`retweet-${tweet.id}-${isRetweeted}-${retweetCount}`}
                 tweetId={tweet.id}
                 count={retweetCount}
                 retweeted={isRetweeted}
               />
-              <TweetAction
-                label={`いいね ${stats.likes}件`}
-                count={stats.likes}
-              >
-                <IoMdHeartEmpty />
-              </TweetAction>
+              <LikeButton
+                key={`like-${tweet.id}-${isLiked}-${likeCount}`}
+                tweetId={tweet.id}
+                count={likeCount}
+                liked={isLiked}
+              />
             </div>
           </div>
         </div>

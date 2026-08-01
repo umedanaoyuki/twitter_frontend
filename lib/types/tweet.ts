@@ -21,9 +21,12 @@ export type Tweet = {
    * 通常の投稿として並んでいる場合は undefined。
    */
   retweetedBy?: string;
+  /** いいね数。ボタン操作で増減させるので整形前の数値で保持する */
+  likeCount: number;
+  /** ログイン中のユーザーがこのツイートをいいね済みかどうか */
+  isLiked: boolean;
   stats: {
     replies: string;
-    likes: string;
     views: string;
   };
 };

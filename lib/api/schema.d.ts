@@ -2310,6 +2310,71 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users/{user_id}/likes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ユーザーのいいね一覧取得
+         * @description 指定ユーザーがいいねしたツイートをカーソルページネーションで取得する
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description ページネーションカーソル（最後に取得したいいねID） */
+                    cursor?: number;
+                    /** @description 取得件数（1〜100、デフォルト20） */
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description ユーザーID */
+                    user_id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.GetUserLikesResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/{user_id}/profile": {
         parameters: {
             query?: never;
@@ -2630,6 +2695,12 @@ export interface components {
         "controllers.GetTweetResponse": {
             tweet?: components["schemas"]["controllers.SwaggerTweet"];
         };
+        "controllers.GetUserLikesResponse": {
+            /** @example false */
+            has_more?: boolean;
+            likes?: components["schemas"]["controllers.SwaggerLikeItem"][];
+            next_cursor?: number;
+        };
         "controllers.GetUserResponse": {
             user?: components["schemas"]["controllers.SwaggerUserDetail"];
         };
@@ -2768,6 +2839,9 @@ export interface components {
             name?: string;
             /** @example 1 */
             user_id?: number;
+        };
+        "controllers.SwaggerLikeItem": {
+            tweet?: components["schemas"]["controllers.SwaggerTweet"];
         };
         "controllers.SwaggerMessage": {
             /** @example メッセージ本文 */
