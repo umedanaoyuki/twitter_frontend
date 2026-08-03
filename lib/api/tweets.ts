@@ -3,6 +3,8 @@ import { requireSessionCookieHeader } from "@/lib/session";
 import { apiClient } from "./client";
 import { getApiErrorMessage } from "./errors";
 import type {
+  ApiBookmark,
+  BookmarkResponse,
   CompleteImageTweetInput,
   CreateImageTweetResponse,
   CreateTweetInput,
@@ -217,6 +219,64 @@ export async function getUserRetweets(
       },
     },
   );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** 指定ツイートをブックマークする */
+export async function bookmarkTweet(
+  tweetId: number,
+): Promise<BookmarkResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.POST(
+    "/tweets/{id}/bookmark",
+    {
+      params: {
+        path: { id: tweetId },
+      },
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** 指定ツイートのブックマークを解除する */
+export async function undoBookmarkTweet(
+  tweetId: number,
+): Promise<BookmarkResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.DELETE(
+    "/tweets/{id}/bookmark",
+    {
+      params: {
+        path: { id: tweetId },
+      },
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** ログイン中のユーザーのブックマーク一覧を取得する（ページングなし） */
+export async function getBookmarks(): Promise<ApiBookmark[]> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.GET("/tweets/bookmarks", {
+    headers: { Cookie: cookieHeader },
+  });
 
   if (error) {
     throw new Error(getApiErrorMessage(error, response.status));

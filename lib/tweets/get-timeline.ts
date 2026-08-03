@@ -6,6 +6,7 @@ import {
 import { getSessionCookieHeader } from "@/lib/session";
 import type { TweetTimelineData } from "@/lib/types/tweet";
 import { emailToDisplayName } from "@/lib/tweets/format";
+import { getBookmarkedTweetIds } from "@/lib/tweets/get-my-bookmarks";
 import {
   getMyRetweets,
   getRetweetedTweetIds,
@@ -33,13 +34,19 @@ export async function getHomeTimeline(options?: {
   const cookieHeader = await getSessionCookieHeader();
   if (!cookieHeader) return null;
 
-  const [response, currentUser, myRetweets, retweetedTweetIds] =
-    await Promise.all([
-      getAllTweets(options),
-      getCurrentUser(),
-      getMyRetweets(),
-      getRetweetedTweetIds(),
-    ]);
+  const [
+    response,
+    currentUser,
+    myRetweets,
+    retweetedTweetIds,
+    bookmarkedTweetIds,
+  ] = await Promise.all([
+    getAllTweets(options),
+    getCurrentUser(),
+    getMyRetweets(),
+    getRetweetedTweetIds(),
+    getBookmarkedTweetIds(),
+  ]);
 
   const pinnedRetweets = myRetweets.slice(0, PINNED_RETWEET_LIMIT);
   const pinnedRetweetIds = new Set(
@@ -73,6 +80,7 @@ export async function getHomeTimeline(options?: {
     ? mapApiTweetsToTimelineTweets(pinnedRetweets, usersById, {
         avatarUrlsById,
         retweetedTweetIds,
+        bookmarkedTweetIds,
         retweetedBy,
       })
     : [];
@@ -83,6 +91,7 @@ export async function getHomeTimeline(options?: {
       ...mapApiTweetsToTimelineTweets(apiTweets, usersById, {
         avatarUrlsById,
         retweetedTweetIds,
+        bookmarkedTweetIds,
       }),
     ],
     hasMore: response.has_more ?? false,

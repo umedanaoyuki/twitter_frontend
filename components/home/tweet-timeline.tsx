@@ -9,12 +9,18 @@ import type { Tweet, TweetTimelineData } from "@/lib/types/tweet";
 
 const LOADING_INDICATOR_DELAY_MS = 1000;
 
+type TweetTimelineProps = TweetTimelineData & {
+  /** 1件も表示するポストが無いときの文言 */
+  emptyMessage?: string;
+};
+
 function TweetTimeline({
   tweets: initialTweets,
   hasMore: initialHasMore,
   nextCursor: initialNextCursor,
   currentUserId,
-}: TweetTimelineData) {
+  emptyMessage = "まだポストがありません",
+}: TweetTimelineProps) {
   const [extraTweets, setExtraTweets] = useState<Tweet[]>([]);
   const [extraHasMore, setExtraHasMore] = useState<boolean | null>(null);
   const [extraNextCursor, setExtraNextCursor] = useState<number | null>(null);
@@ -84,7 +90,7 @@ function TweetTimeline({
   if (tweets.length === 0) {
     return (
       <p className="px-4 py-8 text-center text-[15px] text-[#71767b]">
-        まだポストがありません
+        {emptyMessage}
       </p>
     );
   }
