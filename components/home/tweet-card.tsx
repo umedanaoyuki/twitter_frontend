@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { CommentDialog } from "@/components/home/comment-dialog";
 import type { Comment } from "@/lib/types/comment";
 import type { Tweet } from "@/lib/types/tweet";
+import { BookmarkButton } from "@/components/home/bookmark-button";
 import { LikeButton } from "@/components/home/like-button";
 import { RetweetButton } from "@/components/home/retweet-button";
 import { TweetMenu } from "@/components/home/tweet-menu";
@@ -71,6 +72,7 @@ function TweetCard({
     createdAt,
     retweetCount,
     isRetweeted,
+    isBookmarked,
     retweetedBy,
     likeCount,
     isLiked,
@@ -189,7 +191,7 @@ function TweetCard({
             </div>
           ) : null}
 
-          <div className="mt-3 grid max-w-[425px] grid-cols-5">
+          <div className="mt-3 grid max-w-[425px]">
             <div className="col-span-3 flex justify-between text-[#71767b]">
               <TweetAction
                 label="返信"
@@ -208,6 +210,12 @@ function TweetCard({
                 tweetId={tweet.id}
                 count={likeCount}
                 liked={isLiked}
+              />
+              {/* リポストと同じく、サーバー側の値が変わったらkeyを変えて作り直す */}
+              <BookmarkButton
+                key={`bookmark-${tweet.id}-${isBookmarked}`}
+                tweetId={tweet.id}
+                bookmarked={isBookmarked}
               />
             </div>
           </div>

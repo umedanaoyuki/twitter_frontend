@@ -11,6 +11,8 @@ export function mapApiTweetToTweet(
   options?: {
     /** ログイン中のユーザーがリツイート済みかどうか */
     isRetweeted?: boolean;
+    /** ログイン中のユーザーがブックマーク済みかどうか */
+    isBookmarked?: boolean;
     /** リツイートとして並べる場合の、リツイートした人の表示名 */
     retweetedBy?: string;
     /** ログイン中のユーザーがいいね済みかどうか */
@@ -35,6 +37,7 @@ export function mapApiTweetToTweet(
     createdAt,
     retweetCount: apiTweet.retweet_count ?? 0,
     isRetweeted: options?.isRetweeted ?? false,
+    isBookmarked: options?.isBookmarked ?? false,
     retweetedBy: options?.retweetedBy,
     likeCount: apiTweet.like_count ?? 0,
     isLiked: options?.isLiked ?? false,
@@ -57,6 +60,8 @@ export function mapApiTweetsToTimelineTweets(
     avatarUrlsById?: Map<number, string>;
     /** ログイン中のユーザーがリツイート済みのツイートID */
     retweetedTweetIds?: Set<number>;
+    /** ログイン中のユーザーがブックマーク済みのツイートID */
+    bookmarkedTweetIds?: Set<number>;
     /** リツイートとして並べる場合の、リツイートした人の表示名（全件に付与する） */
     retweetedBy?: string;
     /** ログイン中のユーザーがいいね済みのツイートID */
@@ -74,6 +79,9 @@ export function mapApiTweetsToTimelineTweets(
         isRetweeted:
           apiTweet.id != null &&
           (options?.retweetedTweetIds?.has(apiTweet.id) ?? false),
+        isBookmarked:
+          apiTweet.id != null &&
+          (options?.bookmarkedTweetIds?.has(apiTweet.id) ?? false),
         retweetedBy: options?.retweetedBy,
         isLiked:
           apiTweet.id != null &&

@@ -33,6 +33,10 @@ export type LikeResponse =
   components["schemas"]["controllers.StatusOKResponse"];
 export type GetUserLikesResponse =
   components["schemas"]["controllers.GetUserLikesResponse"];
+// バックエンドの POST/DELETE /tweets/{id}/bookmark は controllers.StatusOKResponse を返す
+export type BookmarkResponse =
+  components["schemas"]["controllers.StatusOKResponse"];
+export type ApiBookmark = components["schemas"]["controllers.SwaggerBookmark"];
 export type GetTweetResponse =
   components["schemas"]["controllers.GetTweetResponse"];
 export type GetCurrentUserTweetsResponse =

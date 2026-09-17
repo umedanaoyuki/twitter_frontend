@@ -8,12 +8,14 @@ import type { Tweet } from "@/lib/types/tweet";
 import { validateTweetContent } from "@/lib/validation/tweet";
 import { clearAuthCookies } from "@/lib/session";
 import {
+  bookmarkTweet,
   completeTweetImage,
   createTweet,
   deleteTweet,
   likeTweet,
   presignTweetImage,
   retweetTweet,
+  undoBookmarkTweet,
   undoRetweetTweet,
   unlikeTweet,
 } from "@/lib/api/tweets";
@@ -51,6 +53,10 @@ export type ToggleRetweetState =
 export type ToggleLikeState =
   | { error: string }
   | { success: true; liked: boolean; message: string };
+
+export type ToggleBookmarkState =
+  | { error: string }
+  | { success: true; bookmarked: boolean; message: string };
 
 export type LogoutState =
   | { error: string }
@@ -244,6 +250,50 @@ export async function toggleLikeAction(
           : liked
             ? "いいねに失敗しました"
             : "いいねの取り消しに失敗しました",
+    };
+  }
+}
+
+/**
+ * ブックマークの追加・解除を切り替える。
+ * @param bookmarked 切り替え後の状態（true で追加、false で解除）
+ */
+export async function toggleBookmarkAction(
+  tweetId: string,
+  bookmarked: boolean,
+): Promise<ToggleBookmarkState> {
+  const id = Number(tweetId);
+  if (!Number.isInteger(id) || id <= 0) {
+    return { error: "ポストの指定が正しくありません" };
+  }
+
+  try {
+    if (bookmarked) {
+      await bookmarkTweet(id);
+    } else {
+      await undoBookmarkTweet(id);
+    }
+
+    revalidatePath("/home");
+    revalidatePath("/profile");
+    revalidatePath("/bookmarks");
+    revalidatePath(`/tweets/${id}`);
+
+    return {
+      success: true,
+      bookmarked,
+      message: bookmarked
+        ? "ブックマークに追加しました"
+        : "ブックマークを削除しました",
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : bookmarked
+            ? "ブックマークの追加に失敗しました"
+            : "ブックマークの削除に失敗しました",
     };
   }
 }

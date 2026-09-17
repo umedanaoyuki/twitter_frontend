@@ -1,11 +1,15 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { IoHomeOutline } from "react-icons/io5";
 import { HiSearch } from "react-icons/hi";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
+import { FaRegBookmark } from "react-icons/fa";
 import { IoIosMore } from "react-icons/io";
 import { DeleteAccountButton } from "@/components/home/delete-account-button";
 import { LogoutButton } from "@/components/home/logout-button";
@@ -17,7 +21,6 @@ type NavLinkItem = {
   label: string;
   href: string;
   icon: ReactNode;
-  active?: boolean;
 };
 
 type NavDeleteItem = {
@@ -38,7 +41,6 @@ const navItems: NavItem[] = [
     label: "ホーム",
     href: "/home",
     icon: <IoHomeOutline className="size-[26px]" />,
-    active: true,
   },
   {
     type: "link",
@@ -65,6 +67,12 @@ const navItems: NavItem[] = [
     icon: <CgProfile className="size-[26px]" />,
   },
   {
+    type: "link",
+    label: "ブックマーク",
+    href: "/bookmarks",
+    icon: <FaRegBookmark className="size-[26px]" />,
+  },
+  {
     type: "logout",
     label: "ログアウト",
   },
@@ -75,6 +83,9 @@ const navItems: NavItem[] = [
 ];
 
 function HomeSidebar() {
+  // 表示中の画面のメニューを強調する（"#" のダミーリンクは常に非アクティブ）
+  const pathname = usePathname();
+
   return (
     <div className="font-chirp flex h-full flex-col px-3">
       <div className="flex min-h-0 flex-1 flex-col">
@@ -98,18 +109,19 @@ function HomeSidebar() {
               );
             }
 
+            const isActive = item.href !== "#" && pathname === item.href;
+
             return (
               <Link
                 key={item.label}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "group flex w-fit items-center gap-5 rounded-full px-4 py-3 transition-colors hover:bg-[#181818]",
-                  item.active && "font-bold",
+                  isActive && "font-bold",
                 )}
               >
-                <span
-                  className={cn("text-[#e7e9ea]", item.active && "scale-105")}
-                >
+                <span className={cn("text-[#e7e9ea]", isActive && "scale-105")}>
                   {item.icon}
                 </span>
                 <span className="text-xl text-[#e7e9ea]">{item.label}</span>

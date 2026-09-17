@@ -1,6 +1,7 @@
 import { getUserLikes } from "@/lib/api/tweets";
 import type { ApiTweet } from "@/lib/api/types";
 import { getAvatarUrlsByIds } from "@/lib/profile/get-profile";
+import { getBookmarkedTweetIds } from "@/lib/tweets/get-my-bookmarks";
 import { getRetweetedTweetIds } from "@/lib/tweets/get-my-retweets";
 import { mapApiTweetsToTimelineTweets } from "@/lib/tweets/map-tweet";
 import type { TweetTimelineData } from "@/lib/types/tweet";
@@ -29,16 +30,19 @@ export async function getMyLikedTimeline(options?: {
     .map((apiTweet) => apiTweet.user_id)
     .filter((userId): userId is number => userId != null);
 
-  const [usersById, avatarUrlsById, retweetedTweetIds] = await Promise.all([
-    getUsersByIds(authorIds),
-    getAvatarUrlsByIds(authorIds),
-    getRetweetedTweetIds(),
-  ]);
+  const [usersById, avatarUrlsById, retweetedTweetIds, bookmarkedTweetIds] =
+    await Promise.all([
+      getUsersByIds(authorIds),
+      getAvatarUrlsByIds(authorIds),
+      getRetweetedTweetIds(),
+      getBookmarkedTweetIds(),
+    ]);
 
   return {
     tweets: mapApiTweetsToTimelineTweets(apiTweets, usersById, {
       avatarUrlsById,
       retweetedTweetIds,
+      bookmarkedTweetIds,
       // 一覧に並ぶのはすべて自分がいいね済みのツイート
       likedTweetIds: new Set(
         apiTweets
