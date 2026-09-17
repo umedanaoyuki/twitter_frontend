@@ -40,7 +40,7 @@ function ProfileFeed({ data, error }: ProfileFeedProps) {
         <>
           <ProfileHeader profile={data.profile} />
 
-          <ProfileTabs timeline={data.timeline} />
+          <ProfileTabs userId={data.profile.userId} timeline={data.timeline} />
         </>
       )}
     </main>

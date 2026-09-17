@@ -3,7 +3,10 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { loadLikedTweetsAction } from "@/app/profile/action";
+import {
+  loadLikedTweetsAction,
+  loadUserTweetsAction,
+} from "@/app/profile/action";
 import { TweetTimeline } from "@/components/home/tweet-timeline";
 import type { TweetTimelineData } from "@/lib/types/tweet";
 import { cn } from "@/lib/utils";
@@ -16,11 +19,13 @@ type Tab = (typeof tabs)[number];
 const selectableTabs: Tab[] = ["ポスト", "いいね"];
 
 type ProfileTabsProps = {
-  /** サーバーで取得済みの自分のポスト一覧 */
+  /** 表示しているプロフィールの持ち主のユーザーID */
+  userId: number;
+  /** サーバーで取得済みのポスト一覧 */
   timeline: TweetTimelineData;
 };
 
-function ProfileTabs({ timeline }: ProfileTabsProps) {
+function ProfileTabs({ userId, timeline }: ProfileTabsProps) {
   const [activeTab, setActiveTab] = useState<Tab>("ポスト");
   // 「いいね」はタブを開いたときに初めて取りに行き、取得後は切り替えても再取得しない
   const [likedTimeline, setLikedTimeline] = useState<TweetTimelineData | null>(
@@ -37,7 +42,7 @@ function ProfileTabs({ timeline }: ProfileTabsProps) {
 
     setLikedError(null);
     startTransition(async () => {
-      const result = await loadLikedTweetsAction();
+      const result = await loadLikedTweetsAction(userId);
 
       if ("error" in result) {
         setLikedError(result.error);
@@ -49,7 +54,7 @@ function ProfileTabs({ timeline }: ProfileTabsProps) {
         tweets: result.tweets,
         hasMore: result.hasMore,
         nextCursor: result.nextCursor,
-        // いいね一覧は自分のプロフィールなので、閲覧者は本人のまま
+        // 閲覧者はポスト一覧と同じ
         currentUserId: timeline.currentUserId,
       });
     });
@@ -91,6 +96,7 @@ function ProfileTabs({ timeline }: ProfileTabsProps) {
       <section role="tabpanel" aria-label={`${activeTab}一覧`}>
         {activeTab === "いいね" ? (
           <LikedTweets
+            userId={userId}
             timeline={likedTimeline}
             isLoading={isLoadingLikes}
             error={likedError}
@@ -99,6 +105,7 @@ function ProfileTabs({ timeline }: ProfileTabsProps) {
           <TweetTimeline
             key={timeline.tweets[0]?.id ?? "empty"}
             {...timeline}
+            loadMore={(cursor) => loadUserTweetsAction(userId, cursor)}
           />
         )}
       </section>
@@ -107,10 +114,12 @@ function ProfileTabs({ timeline }: ProfileTabsProps) {
 }
 
 function LikedTweets({
+  userId,
   timeline,
   isLoading,
   error,
 }: {
+  userId: number;
   timeline: TweetTimelineData | null;
   isLoading: boolean;
   error: string | null;
@@ -139,7 +148,7 @@ function LikedTweets({
       key={timeline.tweets[0]?.id ?? "empty"}
       {...timeline}
       emptyMessage="まだいいねしたポストがありません"
-      loadMore={loadLikedTweetsAction}
+      loadMore={(cursor) => loadLikedTweetsAction(userId, cursor)}
     />
   );
 }
