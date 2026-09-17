@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+import type { LoadMoreTweetsState } from "@/app/home/action";
 import { loadMoreTweetsAction } from "@/app/home/action";
 import { TweetCard } from "@/components/home/tweet-card";
 import type { Tweet, TweetTimelineData } from "@/lib/types/tweet";
@@ -12,6 +13,8 @@ const LOADING_INDICATOR_DELAY_MS = 1000;
 type TweetTimelineProps = TweetTimelineData & {
   /** 1件も表示するポストが無いときの文言 */
   emptyMessage?: string;
+  /** 続きを読み込む処理。ホーム以外の一覧で使うときに差し替える */
+  loadMore?: (cursor: number) => Promise<LoadMoreTweetsState>;
 };
 
 function TweetTimeline({
@@ -20,6 +23,7 @@ function TweetTimeline({
   nextCursor: initialNextCursor,
   currentUserId,
   emptyMessage = "まだポストがありません",
+  loadMore = loadMoreTweetsAction,
 }: TweetTimelineProps) {
   const [extraTweets, setExtraTweets] = useState<Tweet[]>([]);
   const [extraHasMore, setExtraHasMore] = useState<boolean | null>(null);
@@ -53,7 +57,7 @@ function TweetTimeline({
           setTimeout(resolve, LOADING_INDICATOR_DELAY_MS),
         );
 
-        const result = await loadMoreTweetsAction(nextCursor);
+        const result = await loadMore(nextCursor);
         if ("error" in result) {
           toast.error(result.error);
           return;
@@ -66,7 +70,7 @@ function TweetTimeline({
         isLoadingRef.current = false;
       }
     })();
-  }, [nextCursor]);
+  }, [nextCursor, loadMore]);
 
   useEffect(() => {
     if (!hasMore || nextCursor == null) return;

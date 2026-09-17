@@ -8,12 +8,23 @@ import {
   presignProfileImage,
   updateUserProfile,
 } from "@/lib/api/profile";
+import { getMyLikedTimeline } from "@/lib/profile/get-liked-timeline";
 import type { ProfileFormValues } from "@/lib/types/profile";
+import type { Tweet } from "@/lib/types/tweet";
 import { validateProfile, hasProfileErrors } from "@/lib/validation/profile";
 
 export type SaveProfileState =
   | { error: string }
   | { success: true; message: string };
+
+export type LoadLikedTweetsState =
+  | { error: string }
+  | {
+      success: true;
+      tweets: Tweet[];
+      hasMore: boolean;
+      nextCursor: number | null;
+    };
 
 export type PresignProfileImageState =
   | { error: string }
@@ -45,6 +56,36 @@ export async function presignProfileImageAction(
         error instanceof Error
           ? error.message
           : "画像のアップロード準備に失敗しました",
+    };
+  }
+}
+
+/**
+ * いいねしたツイート一覧を取得する。
+ * プロフィールの「いいね」タブを開いたときと、続きを読み込むときに呼ぶ。
+ * @param cursor 続きを読み込む場合の開始位置。未指定なら先頭ページ
+ */
+export async function loadLikedTweetsAction(
+  cursor?: number,
+): Promise<LoadLikedTweetsState> {
+  try {
+    const timeline = await getMyLikedTimeline({ cursor });
+    if (!timeline) {
+      return { error: "ログインが必要です" };
+    }
+
+    return {
+      success: true,
+      tweets: timeline.tweets,
+      hasMore: timeline.hasMore,
+      nextCursor: timeline.nextCursor,
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "いいねしたポストの取得に失敗しました",
     };
   }
 }

@@ -4,6 +4,7 @@ import { getTweet } from "@/lib/api/tweets";
 import { getUserById } from "@/lib/api/users";
 import { getProfileImageUrl } from "@/lib/profile/get-profile";
 import { getBookmarkedTweetIds } from "@/lib/tweets/get-my-bookmarks";
+import { getLikedTweetIds } from "@/lib/tweets/get-my-likes";
 import { getRetweetedTweetIds } from "@/lib/tweets/get-my-retweets";
 import { getTweetComments } from "@/lib/comments/get-comments";
 import { mapApiTweetToTweet } from "@/lib/tweets/map-tweet";
@@ -36,15 +37,18 @@ export async function getTweetDetail(id: string): Promise<TweetDetail> {
     throw new Error("ユーザー情報の取得に失敗しました");
   }
 
-  const [avatarUrl, retweetedTweetIds, bookmarkedTweetIds] = await Promise.all([
-    user.id ? getProfileImageUrl(user.id) : undefined,
-    getRetweetedTweetIds(),
-    getBookmarkedTweetIds(),
-  ]);
+  const [avatarUrl, retweetedTweetIds, likedTweetIds, bookmarkedTweetIds] =
+    await Promise.all([
+      user.id ? getProfileImageUrl(user.id) : undefined,
+      getRetweetedTweetIds(),
+      getLikedTweetIds(),
+      getBookmarkedTweetIds(),
+    ]);
 
   return {
     tweet: mapApiTweetToTweet(tweet, user, avatarUrl, {
       isRetweeted: tweet.id != null && retweetedTweetIds.has(tweet.id),
+      isLiked: tweet.id != null && likedTweetIds.has(tweet.id),
       isBookmarked: tweet.id != null && bookmarkedTweetIds.has(tweet.id),
     }),
     commentList,

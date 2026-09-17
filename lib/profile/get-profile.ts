@@ -6,6 +6,7 @@ import { getSessionCookieHeader } from "@/lib/session";
 import type { ProfilePageData } from "@/lib/types/profile";
 import { mapProfileToView } from "@/lib/profile/map-profile";
 import { getBookmarkedTweetIds } from "@/lib/tweets/get-my-bookmarks";
+import { getLikedTweetIds } from "@/lib/tweets/get-my-likes";
 import { getRetweetedTweetIds } from "@/lib/tweets/get-my-retweets";
 import { mapApiTweetsToTimelineTweets } from "@/lib/tweets/map-tweet";
 
@@ -30,11 +31,13 @@ export async function getMyProfile(options?: {
     throw new Error("ユーザー情報の取得に失敗しました");
   }
 
-  const [profile, retweetedTweetIds, bookmarkedTweetIds] = await Promise.all([
-    getUserProfile(user.id),
-    getRetweetedTweetIds(),
-    getBookmarkedTweetIds(),
-  ]);
+  const [profile, retweetedTweetIds, likedTweetIds, bookmarkedTweetIds] =
+    await Promise.all([
+      getUserProfile(user.id),
+      getRetweetedTweetIds(),
+      getLikedTweetIds(),
+      getBookmarkedTweetIds(),
+    ]);
   const avatarUrl = profile?.image_url || undefined;
 
   return {
@@ -49,6 +52,7 @@ export async function getMyProfile(options?: {
             ? new Map([[user.id, avatarUrl]])
             : undefined,
           retweetedTweetIds,
+          likedTweetIds,
           bookmarkedTweetIds,
         },
       ),

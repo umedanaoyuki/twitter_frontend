@@ -2,11 +2,8 @@ import Link from "next/link";
 import { IoArrowBack } from "react-icons/io5";
 
 import { ProfileHeader } from "@/components/profile/profile-header";
-import { TweetTimeline } from "@/components/home/tweet-timeline";
+import { ProfileTabs } from "@/components/profile/profile-tabs";
 import type { ProfilePageData } from "@/lib/types/profile";
-import { cn } from "@/lib/utils";
-
-const tabs = ["ポスト", "返信", "メディア", "いいね"] as const;
 
 type ProfileFeedProps = {
   data: ProfilePageData | null;
@@ -43,35 +40,7 @@ function ProfileFeed({ data, error }: ProfileFeedProps) {
         <>
           <ProfileHeader profile={data.profile} />
 
-          <nav
-            aria-label="プロフィールのタブ"
-            className="grid grid-cols-4 border-b border-[#2f3336]"
-          >
-            {tabs.map((tab, index) => (
-              <button
-                key={tab}
-                type="button"
-                className={cn(
-                  "relative py-4 text-[15px] transition-colors hover:bg-[#181818]",
-                  index === 0
-                    ? "font-bold text-[#e7e9ea]"
-                    : "font-medium text-[#71767b]",
-                )}
-              >
-                {tab}
-                {index === 0 && (
-                  <span className="absolute bottom-0 left-1/2 h-1 w-14 -translate-x-1/2 rounded-full bg-[#1d9bf0]" />
-                )}
-              </button>
-            ))}
-          </nav>
-
-          <section aria-label="自分のポスト一覧">
-            <TweetTimeline
-              key={data.timeline.tweets[0]?.id ?? "empty"}
-              {...data.timeline}
-            />
-          </section>
+          <ProfileTabs timeline={data.timeline} />
         </>
       )}
     </main>

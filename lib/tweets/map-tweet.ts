@@ -1,10 +1,6 @@
 import type { ApiTweet, SwaggerUserDetail } from "@/lib/api/types";
 import type { Tweet } from "@/lib/types/tweet";
-import {
-  emailToDisplayName,
-  formatCount,
-  formatRelativeTime,
-} from "@/lib/tweets/format";
+import { emailToDisplayName, formatRelativeTime } from "@/lib/tweets/format";
 
 export function mapApiTweetToTweet(
   apiTweet: ApiTweet,
@@ -19,6 +15,8 @@ export function mapApiTweetToTweet(
     isBookmarked?: boolean;
     /** リツイートとして並べる場合の、リツイートした人の表示名 */
     retweetedBy?: string;
+    /** ログイン中のユーザーがいいね済みかどうか */
+    isLiked?: boolean;
   },
 ): Tweet {
   const email = user?.email ?? `user${apiTweet.user_id ?? ""}`;
@@ -41,9 +39,10 @@ export function mapApiTweetToTweet(
     isRetweeted: options?.isRetweeted ?? false,
     isBookmarked: options?.isBookmarked ?? false,
     retweetedBy: options?.retweetedBy,
+    likeCount: apiTweet.like_count ?? 0,
+    isLiked: options?.isLiked ?? false,
     stats: {
       replies: "0",
-      likes: formatCount(apiTweet.like_count ?? 0),
       views: "0",
     },
   };
@@ -65,6 +64,8 @@ export function mapApiTweetsToTimelineTweets(
     bookmarkedTweetIds?: Set<number>;
     /** リツイートとして並べる場合の、リツイートした人の表示名（全件に付与する） */
     retweetedBy?: string;
+    /** ログイン中のユーザーがいいね済みのツイートID */
+    likedTweetIds?: Set<number>;
   },
 ): Tweet[] {
   return apiTweets.map((apiTweet) =>
@@ -82,6 +83,9 @@ export function mapApiTweetsToTimelineTweets(
           apiTweet.id != null &&
           (options?.bookmarkedTweetIds?.has(apiTweet.id) ?? false),
         retweetedBy: options?.retweetedBy,
+        isLiked:
+          apiTweet.id != null &&
+          (options?.likedTweetIds?.has(apiTweet.id) ?? false),
       },
     ),
   );

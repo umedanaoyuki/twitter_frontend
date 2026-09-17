@@ -1,6 +1,7 @@
 import { getBookmarks, getTweet } from "@/lib/api/tweets";
 import type { ApiBookmark, ApiTweet } from "@/lib/api/types";
 import { getSessionCookieHeader } from "@/lib/session";
+import { getLikedTweetIds } from "@/lib/tweets/get-my-likes";
 import { getRetweetedTweetIds } from "@/lib/tweets/get-my-retweets";
 import { mapApiTweetsToTimelineTweets } from "@/lib/tweets/map-tweet";
 import type { TweetTimelineData } from "@/lib/types/tweet";
@@ -39,11 +40,13 @@ export async function getBookmarkTimeline(): Promise<TweetTimelineData | null> {
   const cookieHeader = await getSessionCookieHeader();
   if (!cookieHeader) return null;
 
-  const [bookmarks, currentUser, retweetedTweetIds] = await Promise.all([
-    getBookmarks(),
-    getCurrentUser(),
-    getRetweetedTweetIds(),
-  ]);
+  const [bookmarks, currentUser, retweetedTweetIds, likedTweetIds] =
+    await Promise.all([
+      getBookmarks(),
+      getCurrentUser(),
+      getRetweetedTweetIds(),
+      getLikedTweetIds(),
+    ]);
 
   const bookmarkedTweetIds = [
     ...new Set(
@@ -70,6 +73,7 @@ export async function getBookmarkTimeline(): Promise<TweetTimelineData | null> {
   return {
     tweets: mapApiTweetsToTimelineTweets(apiTweets, usersById, {
       retweetedTweetIds,
+      likedTweetIds,
       // 一覧に並ぶのはすべてブックマーク済みのツイート
       bookmarkedTweetIds: new Set(bookmarkedTweetIds),
     }),

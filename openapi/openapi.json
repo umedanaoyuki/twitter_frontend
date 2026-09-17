@@ -2348,6 +2348,75 @@
                 }
             }
         },
+        "/users/{user_id}/likes": {
+            "get": {
+                "description": "指定ユーザーがいいねしたツイートをカーソルページネーションで取得する",
+                "tags": [
+                    "likes"
+                ],
+                "summary": "ユーザーのいいね一覧取得",
+                "parameters": [
+                    {
+                        "description": "ユーザーID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "ページネーションカーソル（最後に取得したいいねID）",
+                        "name": "cursor",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "取得件数（1〜100、デフォルト20）",
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.GetUserLikesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/{user_id}/profile": {
             "get": {
                 "description": "指定ユーザーのプロフィールを取得する",
@@ -2873,6 +2942,24 @@
                     }
                 }
             },
+            "controllers.GetUserLikesResponse": {
+                "type": "object",
+                "properties": {
+                    "has_more": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "likes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/controllers.SwaggerLikeItem"
+                        }
+                    },
+                    "next_cursor": {
+                        "type": "integer"
+                    }
+                }
+            },
             "controllers.GetUserResponse": {
                 "type": "object",
                 "properties": {
@@ -3201,6 +3288,14 @@
                     "user_id": {
                         "type": "integer",
                         "example": 1
+                    }
+                }
+            },
+            "controllers.SwaggerLikeItem": {
+                "type": "object",
+                "properties": {
+                    "tweet": {
+                        "$ref": "#/components/schemas/controllers.SwaggerTweet"
                     }
                 }
             },

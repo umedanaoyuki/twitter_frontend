@@ -7,6 +7,7 @@ import { getSessionCookieHeader } from "@/lib/session";
 import type { TweetTimelineData } from "@/lib/types/tweet";
 import { emailToDisplayName } from "@/lib/tweets/format";
 import { getBookmarkedTweetIds } from "@/lib/tweets/get-my-bookmarks";
+import { getLikedTweetIds } from "@/lib/tweets/get-my-likes";
 import {
   getMyRetweets,
   getRetweetedTweetIds,
@@ -39,12 +40,15 @@ export async function getHomeTimeline(options?: {
     currentUser,
     myRetweets,
     retweetedTweetIds,
+    likedTweetIds,
     bookmarkedTweetIds,
   ] = await Promise.all([
+    // like_countを返してくる
     getAllTweets(options),
     getCurrentUser(),
     getMyRetweets(),
     getRetweetedTweetIds(),
+    getLikedTweetIds(),
     getBookmarkedTweetIds(),
   ]);
 
@@ -80,6 +84,7 @@ export async function getHomeTimeline(options?: {
     ? mapApiTweetsToTimelineTweets(pinnedRetweets, usersById, {
         avatarUrlsById,
         retweetedTweetIds,
+        likedTweetIds,
         bookmarkedTweetIds,
         retweetedBy,
       })
@@ -91,6 +96,7 @@ export async function getHomeTimeline(options?: {
       ...mapApiTweetsToTimelineTweets(apiTweets, usersById, {
         avatarUrlsById,
         retweetedTweetIds,
+        likedTweetIds,
         bookmarkedTweetIds,
       }),
     ],
