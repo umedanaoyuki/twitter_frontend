@@ -8,7 +8,9 @@ import {
   presignProfileImage,
   updateUserProfile,
 } from "@/lib/api/profile";
-import { getMyLikedTimeline } from "@/lib/profile/get-liked-timeline";
+import { followUser } from "@/lib/api/users";
+import { getLikedTimeline } from "@/lib/profile/get-liked-timeline";
+import { getUserTimeline } from "@/lib/profile/get-profile";
 import type { ProfileFormValues } from "@/lib/types/profile";
 import type { Tweet } from "@/lib/types/tweet";
 import { validateProfile, hasProfileErrors } from "@/lib/validation/profile";
@@ -25,6 +27,12 @@ export type LoadLikedTweetsState =
       hasMore: boolean;
       nextCursor: number | null;
     };
+
+export type LoadUserTweetsState = LoadLikedTweetsState;
+
+export type FollowState =
+  | { error: string }
+  | { success: true; message: string };
 
 export type PresignProfileImageState =
   | { error: string }
@@ -60,16 +68,64 @@ export async function presignProfileImageAction(
   }
 }
 
+/** 指定ユーザーをフォローする。 */
+export async function followAction(userId: number): Promise<FollowState> {
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return { error: "ユーザーの指定が正しくありません" };
+  }
+
+  try {
+    await followUser(userId);
+
+    revalidatePath(`/users/${userId}`);
+
+    return { success: true, message: "フォローしました" };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "フォローに失敗しました",
+    };
+  }
+}
+
 /**
- * いいねしたツイート一覧を取得する。
+ * 指定ユーザーのポスト一覧の続きを取得する。
+ * プロフィールの「ポスト」タブで続きを読み込むときに呼ぶ。
+ */
+export async function loadUserTweetsAction(
+  userId: number,
+  cursor: number,
+): Promise<LoadUserTweetsState> {
+  try {
+    const timeline = await getUserTimeline(userId, { cursor });
+    if (!timeline) {
+      return { error: "ログインが必要です" };
+    }
+
+    return {
+      success: true,
+      tweets: timeline.tweets,
+      hasMore: timeline.hasMore,
+      nextCursor: timeline.nextCursor,
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "ポストの取得に失敗しました",
+    };
+  }
+}
+
+/**
+ * 指定ユーザーがいいねしたツイート一覧を取得する。
  * プロフィールの「いいね」タブを開いたときと、続きを読み込むときに呼ぶ。
  * @param cursor 続きを読み込む場合の開始位置。未指定なら先頭ページ
  */
 export async function loadLikedTweetsAction(
+  userId: number,
   cursor?: number,
 ): Promise<LoadLikedTweetsState> {
   try {
-    const timeline = await getMyLikedTimeline({ cursor });
+    const timeline = await getLikedTimeline(userId, { cursor });
     if (!timeline) {
       return { error: "ログインが必要です" };
     }
