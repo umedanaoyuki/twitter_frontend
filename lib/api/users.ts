@@ -46,6 +46,26 @@ export async function followUser(userId: number): Promise<FollowResponse> {
   return data;
 }
 
+/** 指定ユーザーのフォローを解除する */
+export async function unfollowUser(userId: number): Promise<FollowResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.DELETE(
+    "/users/{user_id}/follow",
+    {
+      params: {
+        path: { user_id: userId },
+      },
+      headers: { Cookie: cookieHeader },
+    },
+  );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
 /** 指定ユーザーがフォローしているユーザー一覧を取得する */
 export async function getUserFollowing(
   userId: number,

@@ -8,7 +8,7 @@ import {
   presignProfileImage,
   updateUserProfile,
 } from "@/lib/api/profile";
-import { followUser } from "@/lib/api/users";
+import { followUser, unfollowUser } from "@/lib/api/users";
 import { getLikedTimeline } from "@/lib/profile/get-liked-timeline";
 import { getUserTimeline } from "@/lib/profile/get-profile";
 import type { ProfileFormValues } from "@/lib/types/profile";
@@ -30,9 +30,9 @@ export type LoadLikedTweetsState =
 
 export type LoadUserTweetsState = LoadLikedTweetsState;
 
-export type FollowState =
+export type ToggleFollowState =
   | { error: string }
-  | { success: true; message: string };
+  | { success: true; following: boolean; message: string };
 
 export type PresignProfileImageState =
   | { error: string }
@@ -68,21 +68,40 @@ export async function presignProfileImageAction(
   }
 }
 
-/** 指定ユーザーをフォローする。 */
-export async function followAction(userId: number): Promise<FollowState> {
+/**
+ * フォローの実行・解除を切り替える。
+ * @param following 切り替え後の状態（true でフォロー、false で解除）
+ */
+export async function toggleFollowAction(
+  userId: number,
+  following: boolean,
+): Promise<ToggleFollowState> {
   if (!Number.isInteger(userId) || userId <= 0) {
     return { error: "ユーザーの指定が正しくありません" };
   }
 
   try {
-    await followUser(userId);
+    if (following) {
+      await followUser(userId);
+    } else {
+      await unfollowUser(userId);
+    }
 
     revalidatePath(`/users/${userId}`);
 
-    return { success: true, message: "フォローしました" };
+    return {
+      success: true,
+      following,
+      message: following ? "フォローしました" : "フォローを解除しました",
+    };
   } catch (error) {
     return {
-      error: error instanceof Error ? error.message : "フォローに失敗しました",
+      error:
+        error instanceof Error
+          ? error.message
+          : following
+            ? "フォローに失敗しました"
+            : "フォローの解除に失敗しました",
     };
   }
 }

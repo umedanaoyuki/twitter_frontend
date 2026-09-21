@@ -43,7 +43,7 @@ export type GetCurrentUserTweetsResponse =
   components["schemas"]["controllers.GetCurrentUserTweetsResponse"];
 export type GetAllTweetsResponse =
   components["schemas"]["controllers.GetAllTweetsResponse"];
-// バックエンドの POST /users/{user_id}/follow は controllers.StatusOKResponse を返す
+// バックエンドの POST/DELETE /users/{user_id}/follow は controllers.StatusOKResponse を返す
 export type FollowResponse =
   components["schemas"]["controllers.StatusOKResponse"];
 export type GetFollowingResponse =
