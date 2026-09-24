@@ -10,6 +10,12 @@ export type ProfileFormValues = {
 
 /** プロフィール画面の表示に使うビューモデル */
 export type ProfileView = {
+  /** 表示しているプロフィールの持ち主のユーザーID */
+  userId: number;
+  /** ログイン中のユーザー自身のプロフィールかどうか（編集ボタンとフォローボタンの出し分けに使う） */
+  isOwnProfile: boolean;
+  /** ログイン中のユーザーがこのユーザーをフォロー済みかどうか */
+  isFollowing: boolean;
   /** プロフィールが未作成の場合は false（保存時に作成扱いにする） */
   exists: boolean;
   /** 表示名（プロフィール名 or メールのローカル部にフォールバック） */
