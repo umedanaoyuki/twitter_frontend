@@ -488,6 +488,134 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 通知一覧取得
+         * @description ログインユーザー宛の通知（いいね・フォロー・コメント）をカーソルページネーションで取得する
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description ページネーションカーソル（最後に取得した通知ID） */
+                    cursor?: number;
+                    /** @description 取得件数（1〜100、デフォルト20） */
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.GetNotificationsResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notifications/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 未読通知件数取得
+         * @description ログインユーザー宛の未読通知の件数のみを返却する（バッジ表示などの軽量用途向け）
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.GetNotificationCountResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["controllers.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/profile": {
         parameters: {
             query?: never;
@@ -2692,6 +2820,16 @@ export interface components {
         "controllers.GetMessagesResponse": {
             messages?: components["schemas"]["controllers.SwaggerMessage"][];
         };
+        "controllers.GetNotificationCountResponse": {
+            /** @example 3 */
+            unread_count?: number;
+        };
+        "controllers.GetNotificationsResponse": {
+            /** @example false */
+            has_more?: boolean;
+            next_cursor?: number;
+            notifications?: components["schemas"]["controllers.SwaggerNotification"][];
+        };
         "controllers.GetTweetResponse": {
             tweet?: components["schemas"]["controllers.SwaggerTweet"];
         };
@@ -2852,6 +2990,29 @@ export interface components {
             group_id?: number;
             /** @example 1 */
             id?: number;
+            /** @example 1 */
+            user_id?: number;
+        };
+        "controllers.SwaggerNotification": {
+            /** @example 2 */
+            actor_id?: number;
+            /** @example 1 */
+            comment_id?: number;
+            /** @example 2024-01-01T00:00:00Z */
+            created_at?: string;
+            /** @example 1 */
+            id?: number;
+            /** @example false */
+            is_read?: boolean;
+            /** @example 2024-01-01T00:00:00Z */
+            read_at?: string;
+            /** @example 1 */
+            tweet_id?: number;
+            /**
+             * @example like
+             * @enum {string}
+             */
+            type?: "like" | "follow" | "comment";
             /** @example 1 */
             user_id?: number;
         };
