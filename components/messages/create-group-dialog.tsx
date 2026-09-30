@@ -4,10 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import {
-  addMemberCandidateAction,
-  createGroupAction,
-} from "@/app/messages/action";
+import { createGroupAction } from "@/app/messages/action";
 import { MemberCandidateList } from "@/components/messages/member-candidate-list";
 import {
   Dialog,
@@ -22,42 +19,33 @@ import { cn } from "@/lib/utils";
 import {
   getGroupNameLength,
   MAX_GROUP_NAME_LENGTH,
-  parseUserIdInput,
   validateGroupName,
   validateMemberUserIds,
 } from "@/lib/validation/group";
 
 type CreateGroupDialogProps = {
   /** フォロー中ユーザーから作ったメンバー候補 */
-  initialCandidates: MemberCandidate[];
+  candidates: MemberCandidate[];
 };
 
-function CreateGroupDialog({ initialCandidates }: CreateGroupDialogProps) {
+function CreateGroupDialog({ candidates }: CreateGroupDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  const [candidates, setCandidates] =
-    useState<MemberCandidate[]>(initialCandidates);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [userIdInput, setUserIdInput] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [isAddingCandidate, startAddingCandidate] = useTransition();
 
   const nameLength = getGroupNameLength(name);
   const nameError = name ? validateGroupName(name) : null;
   const membersError = validateMemberUserIds([...selectedIds]);
   const canSubmit =
     !isPending && name.trim().length > 0 && !nameError && !membersError;
-  const canAddCandidate =
-    !isAddingCandidate && parseUserIdInput(userIdInput) !== null;
 
   function handleOpenChange(next: boolean) {
     // 開くたびに初期状態へ戻す（キャンセルした場合の入力も破棄）
     if (next) {
       setName("");
-      setCandidates(initialCandidates);
       setSelectedIds(new Set());
-      setUserIdInput("");
     }
     setOpen(next);
   }
@@ -71,27 +59,6 @@ function CreateGroupDialog({ initialCandidates }: CreateGroupDialogProps) {
         next.add(userId);
       }
       return next;
-    });
-  }
-
-  function handleAddCandidate() {
-    if (!canAddCandidate) return;
-
-    startAddingCandidate(async () => {
-      const result = await addMemberCandidateAction(userIdInput);
-      if ("error" in result) {
-        toast.error(result.error);
-        return;
-      }
-
-      const { candidate } = result;
-      setCandidates((current) =>
-        current.some((item) => item.id === candidate.id)
-          ? current
-          : [...current, candidate],
-      );
-      setSelectedIds((current) => new Set(current).add(candidate.id));
-      setUserIdInput("");
     });
   }
 
@@ -204,46 +171,10 @@ function CreateGroupDialog({ initialCandidates }: CreateGroupDialogProps) {
                 onToggle={toggleSelected}
                 disabled={isPending}
               />
-            </fieldset>
-
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="member-user-id"
-                className="text-[13px] text-[#71767b]"
-              >
-                ユーザーIDで追加
-              </label>
-              <div className="flex gap-2">
-                <input
-                  id="member-user-id"
-                  type="text"
-                  inputMode="numeric"
-                  value={userIdInput}
-                  onChange={(e) => setUserIdInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    // Enter でフォーム全体が送信されないようにする
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddCandidate();
-                    }
-                  }}
-                  disabled={isPending || isAddingCandidate}
-                  placeholder="例: 2"
-                  className="min-w-0 flex-1 rounded-md border border-[#333639] bg-black px-3 py-2 text-[15px] text-[#e7e9ea] placeholder:text-[#71767b] focus:border-[#1d9bf0] focus:outline-none disabled:opacity-50"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddCandidate}
-                  disabled={!canAddCandidate || isPending}
-                  className="rounded-full border border-[#536471] px-4 py-1.5 text-[15px] font-bold text-[#e7e9ea] transition-colors hover:bg-[#181818] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isAddingCandidate ? "確認中..." : "追加"}
-                </button>
-              </div>
               <p className="px-1 text-[13px] text-[#71767b]">
-                自分は作成時に自動でメンバーに追加されます
+                自分自身は作成時に自動でメンバーに追加されます
               </p>
-            </div>
+            </fieldset>
           </div>
         </form>
       </DialogContent>

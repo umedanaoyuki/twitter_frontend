@@ -1,4 +1,4 @@
-import { getFollowing } from "@/lib/api/follows";
+import { getUserFollowing } from "@/lib/api/users";
 import { mapUserToMessageAuthor } from "@/lib/messages/map-message";
 import { getAvatarUrlsByIds } from "@/lib/profile/get-profile";
 import type { MemberCandidate } from "@/lib/types/message";
@@ -16,7 +16,7 @@ export async function getMemberCandidates(
   currentUserId: number,
 ): Promise<MemberCandidate[]> {
   try {
-    const response = await getFollowing(currentUserId, {
+    const response = await getUserFollowing(currentUserId, {
       limit: MAX_CANDIDATES,
     });
     const userIds = [

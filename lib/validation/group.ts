@@ -30,14 +30,3 @@ export function validateMemberUserIds(memberUserIds: number[]): string | null {
 
   return null;
 }
-
-/** 入力欄の文字列をユーザーIDとして解釈する。不正なら null。 */
-export function parseUserIdInput(value: string): number | null {
-  const trimmed = value.trim();
-  if (!/^\d+$/.test(trimmed)) return null;
-
-  const parsed = Number(trimmed);
-  if (!Number.isSafeInteger(parsed) || parsed < 1) return null;
-
-  return parsed;
-}

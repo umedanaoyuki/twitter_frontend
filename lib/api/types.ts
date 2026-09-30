@@ -93,5 +93,3 @@ export type CreateMessageInput =
 export type CreateMessageResponse =
   components["schemas"]["controllers.CreateMessageResponse"];
 export type ApiFollow = components["schemas"]["controllers.SwaggerFollow"];
-export type GetFollowingResponse =
-  components["schemas"]["controllers.GetFollowingResponse"];

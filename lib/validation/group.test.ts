@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import {
   MAX_GROUP_NAME_LENGTH,
-  parseUserIdInput,
   validateGroupName,
   validateMemberUserIds,
 } from "./group";
@@ -41,17 +40,4 @@ describe("validateMemberUserIds", () => {
       "メンバーの指定が正しくありません",
     );
   });
-});
-
-describe("parseUserIdInput", () => {
-  it("parses a positive integer", () => {
-    expect(parseUserIdInput(" 42 ")).toBe(42);
-  });
-
-  it.each(["", "abc", "0", "-1", "1.5", "1e3"])(
-    "returns null for invalid input: %j",
-    (value) => {
-      expect(parseUserIdInput(value)).toBeNull();
-    },
-  );
 });

@@ -21,7 +21,7 @@ function MemberCandidateList({
   if (candidates.length === 0) {
     return (
       <p className="px-1 py-3 text-[13px] text-[#71767b]">
-        候補がありません。下の欄からユーザーIDで追加してください
+        フォロー中のユーザーがいません。メンバーにしたいユーザーをフォローしてください
       </p>
     );
   }

@@ -6,11 +6,9 @@ import { createGroup, createGroupMessage } from "@/lib/api/groups";
 import { mapUserToMessageAuthor } from "@/lib/messages/map-message";
 import { getProfileImageUrl } from "@/lib/profile/get-profile";
 import { formatRelativeTime } from "@/lib/tweets/format";
-import type { MemberCandidate, Message } from "@/lib/types/message";
+import type { Message } from "@/lib/types/message";
 import { getCurrentUser } from "@/lib/users/get-current-user";
-import { getUserDetail } from "@/lib/users/get-user-detail";
 import {
-  parseUserIdInput,
   validateGroupName,
   validateMemberUserIds,
 } from "@/lib/validation/group";
@@ -23,10 +21,6 @@ export type PostMessageState =
 export type CreateGroupState =
   | { error: string }
   | { success: true; message: string; groupId: string };
-
-export type AddMemberCandidateState =
-  | { error: string }
-  | { success: true; candidate: MemberCandidate };
 
 function parseGroupId(groupId: string): number | null {
   const parsed = Number(groupId);
@@ -127,34 +121,4 @@ export async function createGroupAction(
         error instanceof Error ? error.message : "グループの作成に失敗しました",
     };
   }
-}
-
-/**
- * ユーザーIDを指定してメンバー候補に追加する。
- * フォロー機能のUIが未実装のあいだ、フォロー中以外のユーザーを選べるようにするための暫定対応。
- */
-export async function addMemberCandidateAction(
-  userIdInput: string,
-): Promise<AddMemberCandidateState> {
-  const userId = parseUserIdInput(userIdInput);
-  if (userId === null) {
-    return { error: "ユーザーIDは1以上の整数で入力してください" };
-  }
-
-  const currentUser = await getCurrentUser();
-  if (currentUser?.id === userId) {
-    return { error: "自分自身は作成時に自動で追加されます" };
-  }
-
-  const user = await getUserDetail(userId);
-  if (!user) {
-    return { error: "指定されたユーザーが見つかりません" };
-  }
-
-  const avatarUrl = await getProfileImageUrl(userId);
-
-  return {
-    success: true,
-    candidate: mapUserToMessageAuthor(userId, user, avatarUrl),
-  };
 }

@@ -39,9 +39,7 @@ function GroupListView({
                 </p>
               )}
             </div>
-            {canCreate && (
-              <CreateGroupDialog initialCandidates={memberCandidates} />
-            )}
+            {canCreate && <CreateGroupDialog candidates={memberCandidates} />}
           </header>
 
           <section aria-label="グループ一覧">
