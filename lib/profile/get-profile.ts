@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { getUserProfile } from "@/lib/api/profile";
-import { getCurrentUserTweets } from "@/lib/api/tweets";
+import { getCurrentUserTweets, getUserTweets } from "@/lib/api/tweets";
 import { getSessionCookieHeader } from "@/lib/session";
 import type { ProfilePageData } from "@/lib/types/profile";
 import { mapProfileToView } from "@/lib/profile/map-profile";
@@ -9,6 +9,10 @@ import { getBookmarkedTweetIds } from "@/lib/tweets/get-my-bookmarks";
 import { getLikedTweetIds } from "@/lib/tweets/get-my-likes";
 import { getRetweetedTweetIds } from "@/lib/tweets/get-my-retweets";
 import { mapApiTweetsToTimelineTweets } from "@/lib/tweets/map-tweet";
+import type { TweetTimelineData } from "@/lib/types/tweet";
+import { getCurrentUserId } from "@/lib/users/get-current-user";
+import { getUserDetail } from "@/lib/users/get-user-detail";
+import { getFollowingUserIds } from "@/lib/users/get-my-following";
 
 /**
  * ログイン中のユーザーのプロフィール画面データを取得する。
@@ -41,7 +45,10 @@ export async function getMyProfile(options?: {
   const avatarUrl = profile?.image_url || undefined;
 
   return {
-    profile: mapProfileToView(profile, user.email),
+    profile: mapProfileToView(profile, user.email, {
+      userId: user.id,
+      isOwnProfile: true,
+    }),
     timeline: {
       // 一覧はすべてログイン中ユーザーの投稿なので、投稿者情報は自分の分だけで足りる
       tweets: mapApiTweetsToTimelineTweets(
@@ -61,6 +68,79 @@ export async function getMyProfile(options?: {
       currentUserId: user.id,
       viewerAvatarUrl: avatarUrl,
     },
+  };
+}
+
+/**
+ * 指定ユーザーのポスト一覧を取得する。
+ * 未ログインの場合は null、ユーザーが存在しない場合は例外を投げる。
+ */
+export async function getUserTimeline(
+  userId: number,
+  options?: { cursor?: number; limit?: number },
+): Promise<(TweetTimelineData & { email: string }) | null> {
+  const currentUserId = await getCurrentUserId();
+  if (!currentUserId) return null;
+
+  // GET /users/{user_id}/tweets は投稿者情報を返さないため、ユーザーは別途取得する
+  const [response, user] = await Promise.all([
+    getUserTweets(userId, options),
+    getUserDetail(userId),
+  ]);
+  if (!user?.id || !user?.email) {
+    throw new Error("ユーザー情報の取得に失敗しました");
+  }
+
+  const [avatarUrl, retweetedTweetIds, likedTweetIds, bookmarkedTweetIds] =
+    await Promise.all([
+      getProfileImageUrl(user.id),
+      getRetweetedTweetIds(),
+      getLikedTweetIds(),
+      getBookmarkedTweetIds(),
+    ]);
+
+  return {
+    email: user.email,
+    // 一覧はすべて同じユーザーの投稿なので、投稿者情報は1人分だけで足りる
+    tweets: mapApiTweetsToTimelineTweets(
+      response.tweets ?? [],
+      new Map([[user.id, user]]),
+      {
+        avatarUrlsById: avatarUrl ? new Map([[user.id, avatarUrl]]) : undefined,
+        retweetedTweetIds,
+        likedTweetIds,
+        bookmarkedTweetIds,
+      },
+    ),
+    hasMore: response.has_more ?? false,
+    nextCursor: response.next_cursor ?? null,
+    currentUserId,
+  };
+}
+
+/**
+ * 他のユーザーのプロフィール画面データを取得する。
+ * 未ログインの場合は null を返す。
+ */
+export async function getUserProfilePage(
+  userId: number,
+): Promise<ProfilePageData | null> {
+  const timeline = await getUserTimeline(userId);
+  if (!timeline) return null;
+
+  const [profile, followingUserIds] = await Promise.all([
+    getUserProfile(userId),
+    getFollowingUserIds(),
+  ]);
+  const { email, ...timelineData } = timeline;
+
+  return {
+    profile: mapProfileToView(profile, email, {
+      userId,
+      isOwnProfile: timeline.currentUserId === userId,
+      isFollowing: followingUserIds.has(userId),
+    }),
+    timeline: timelineData,
   };
 }
 

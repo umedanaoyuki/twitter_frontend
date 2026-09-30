@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { CommentDialog } from "@/components/home/comment-dialog";
@@ -86,6 +87,14 @@ function TweetCard({
     tweet.authorId != null &&
     currentUserId === tweet.authorId;
 
+  // 自分のポストは編集できる /profile 側へ遷移させる
+  const profileHref =
+    tweet.authorId == null
+      ? null
+      : isOwnTweet
+        ? "/profile"
+        : `/users/${tweet.authorId}`;
+
   const navigateToDetail = () => {
     router.push(`/tweets/${tweet.id}`);
   };
@@ -142,9 +151,20 @@ function TweetCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div className="flex min-w-0 flex-wrap items-center gap-1 text-[15px]">
-              <span className="truncate font-bold text-[#e7e9ea]">
-                {author.name}
-              </span>
+              {profileHref ? (
+                <Link
+                  href={profileHref}
+                  // カード全体のクリック（詳細への遷移）を発火させない
+                  onClick={(event) => event.stopPropagation()}
+                  className="truncate font-bold text-[#e7e9ea] hover:underline"
+                >
+                  {author.name}
+                </Link>
+              ) : (
+                <span className="truncate font-bold text-[#e7e9ea]">
+                  {author.name}
+                </span>
+              )}
               {author.verified && (
                 <svg
                   viewBox="0 0 22 22"

@@ -17,6 +17,7 @@ function formatJoinedText(isoDate?: string): string {
 export function mapProfileToView(
   profile: SwaggerUserProfile | null,
   email: string,
+  owner: { userId: number; isOwnProfile: boolean; isFollowing?: boolean },
 ): ProfileView {
   const handle = emailToDisplayName(email);
   const name = profile?.name?.trim() || handle;
@@ -25,6 +26,9 @@ export function mapProfileToView(
   const imageUrl = profile?.image_url || undefined;
 
   return {
+    userId: owner.userId,
+    isOwnProfile: owner.isOwnProfile,
+    isFollowing: owner.isFollowing ?? false,
     exists: profile !== null,
     name,
     handle,

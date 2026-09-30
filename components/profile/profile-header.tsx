@@ -2,6 +2,7 @@ import Image from "next/image";
 import { IoCalendarClearOutline, IoLocationOutline } from "react-icons/io5";
 
 import { EditProfileDialog } from "@/components/profile/edit-profile-dialog";
+import { FollowButton } from "@/components/profile/follow-button";
 import type { ProfileView } from "@/lib/types/profile";
 
 type ProfileHeaderProps = {
@@ -35,10 +36,19 @@ function ProfileHeader({ profile }: ProfileHeaderProps) {
           </div>
 
           <div className="mt-3">
-            <EditProfileDialog
-              exists={profile.exists}
-              initialValues={profile.form}
-            />
+            {profile.isOwnProfile ? (
+              <EditProfileDialog
+                exists={profile.exists}
+                initialValues={profile.form}
+              />
+            ) : (
+              // サーバー側の値が変わったらkeyを変えて作り直す
+              <FollowButton
+                key={`follow-${profile.userId}-${profile.isFollowing}`}
+                userId={profile.userId}
+                following={profile.isFollowing}
+              />
+            )}
           </div>
         </div>
 

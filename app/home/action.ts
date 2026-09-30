@@ -5,6 +5,8 @@ import { getHomeTimeline } from "@/lib/tweets/get-timeline";
 import { deleteAccount } from "@/lib/api/users";
 import { logout } from "@/lib/api/auth";
 import type { Tweet } from "@/lib/types/tweet";
+import type { UserSummary } from "@/lib/types/user";
+import { getFollowingUsers } from "@/lib/users/get-following-users";
 import { validateTweetContent } from "@/lib/validation/tweet";
 import { clearAuthCookies } from "@/lib/session";
 import {
@@ -34,6 +36,15 @@ export type LoadMoreTweetsState =
   | {
       success: true;
       tweets: Tweet[];
+      hasMore: boolean;
+      nextCursor: number | null;
+    };
+
+export type LoadFollowingUsersState =
+  | { error: string }
+  | {
+      success: true;
+      users: UserSummary[];
       hasMore: boolean;
       nextCursor: number | null;
     };
@@ -149,6 +160,36 @@ export async function loadMoreTweetsAction(
     return {
       error:
         error instanceof Error ? error.message : "投稿の取得に失敗しました",
+    };
+  }
+}
+
+/**
+ * ログイン中のユーザーがフォローしているユーザー一覧を取得する。
+ * ホームの「フォロー中」タブを開いたときと、続きを読み込むときに呼ぶ。
+ * @param cursor 続きを読み込む場合の開始位置。未指定なら先頭ページ
+ */
+export async function loadFollowingUsersAction(
+  cursor?: number,
+): Promise<LoadFollowingUsersState> {
+  try {
+    const list = await getFollowingUsers({ cursor });
+    if (!list) {
+      return { error: "ログインが必要です" };
+    }
+
+    return {
+      success: true,
+      users: list.users,
+      hasMore: list.hasMore,
+      nextCursor: list.nextCursor,
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "フォロー中のアカウントの取得に失敗しました",
     };
   }
 }
