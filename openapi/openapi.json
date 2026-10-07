@@ -538,6 +538,50 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "SessionAuth": []
+                    }
+                ],
+                "description": "ログインユーザー宛の通知をすべて削除する（物理削除）",
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "通知全件削除",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.StatusOKResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/controllers.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/notifications/count": {
