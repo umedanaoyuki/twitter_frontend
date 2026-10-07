@@ -5,6 +5,7 @@ import { getApiErrorMessage } from "./errors";
 import type {
   GetNotificationCountResponse,
   GetNotificationsResponse,
+  DeleteAllNotificationsResponse,
 } from "./types";
 
 /** ログイン中のユーザー宛の通知一覧を新しい順に取得する */
@@ -39,6 +40,20 @@ export async function getNotificationCount(): Promise<GetNotificationCountRespon
       headers: { Cookie: cookieHeader },
     },
   );
+
+  if (error) {
+    throw new Error(getApiErrorMessage(error, response.status));
+  }
+
+  return data;
+}
+
+/** ログイン中のユーザー宛の通知をすべて削除する */
+export async function deleteAllNotifications(): Promise<DeleteAllNotificationsResponse> {
+  const cookieHeader = await requireSessionCookieHeader();
+  const { data, error, response } = await apiClient.DELETE("/notifications", {
+    headers: { Cookie: cookieHeader },
+  });
 
   if (error) {
     throw new Error(getApiErrorMessage(error, response.status));

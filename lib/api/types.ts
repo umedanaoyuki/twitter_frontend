@@ -86,3 +86,6 @@ export type GetNotificationsResponse =
   components["schemas"]["controllers.GetNotificationsResponse"];
 export type GetNotificationCountResponse =
   components["schemas"]["controllers.GetNotificationCountResponse"];
+// バックエンドの DELETE /notifications は controllers.StatusOKResponse を返す
+export type DeleteAllNotificationsResponse =
+  components["schemas"]["controllers.StatusOKResponse"];

@@ -99,7 +99,6 @@ export async function getNotificationList(options?: {
       tweetId,
       tweetContent:
         tweetId != null ? (tweetContentsById.get(tweetId) ?? null) : null,
-      isRead: notification.is_read ?? false,
       timestamp: createdAt ? formatRelativeTime(createdAt) : "",
       createdAt,
     };

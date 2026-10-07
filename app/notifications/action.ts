@@ -1,7 +1,12 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
+import { deleteAllNotifications } from "@/lib/api/notifications";
 import { getNotificationList } from "@/lib/notifications/get-notifications";
 import type { Notification } from "@/lib/types/notification";
+
+export type ClearNotificationsState = { error: string } | { success: true };
 
 export type LoadMoreNotificationsState =
   | { error: string }
@@ -32,6 +37,23 @@ export async function loadMoreNotificationsAction(
     return {
       error:
         error instanceof Error ? error.message : "通知の取得に失敗しました",
+    };
+  }
+}
+
+/**
+ * 通知をすべて削除する。
+ * 「通知を消す」ボタンから呼び、一覧とサイドバーのバッジを消すために使う。
+ */
+export async function clearNotificationsAction(): Promise<ClearNotificationsState> {
+  try {
+    await deleteAllNotifications();
+    revalidatePath("/notifications");
+    return { success: true };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "通知の削除に失敗しました",
     };
   }
 }

@@ -6,7 +6,6 @@ import { FaHeart } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import type { Notification, NotificationType } from "@/lib/types/notification";
-import { cn } from "@/lib/utils";
 
 type NotificationCardProps = {
   notification: Notification;
@@ -33,7 +32,7 @@ const NOTIFICATION_STYLES: Record<
 
 /** 通知一覧で使う、通知1件分の行 */
 function NotificationCard({ notification }: NotificationCardProps) {
-  const { actor, type, tweetId, tweetContent, isRead, timestamp, createdAt } =
+  const { actor, type, tweetId, tweetContent, timestamp, createdAt } =
     notification;
   const { icon, message } = NOTIFICATION_STYLES[type];
   const profileHref = `/users/${actor.id}`;
@@ -41,12 +40,7 @@ function NotificationCard({ notification }: NotificationCardProps) {
   const targetHref = tweetId != null ? `/tweets/${tweetId}` : profileHref;
 
   return (
-    <li
-      className={cn(
-        "relative border-b border-[#2f3336] transition-colors hover:bg-[#080808]",
-        !isRead && "bg-[#0a1a2a]/60",
-      )}
-    >
+    <li className="relative border-b border-[#2f3336] transition-colors hover:bg-[#080808]">
       {/* 行全体をクリック可能にしつつ、内側のユーザーリンクは個別に押せるようにする */}
       <Link
         href={targetHref}

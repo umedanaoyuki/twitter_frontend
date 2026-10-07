@@ -1,6 +1,6 @@
 export type NotificationType = "like" | "follow" | "comment";
 
-/** 通知一覧で1行に表示する通知 */
+/** 通知一覧で1行に表示する通知。既読のものは一覧に出さないので未読のみ */
 export type Notification = {
   id: number;
   type: NotificationType;
@@ -15,7 +15,6 @@ export type Notification = {
   tweetId: number | null;
   /** 対象ツイートの本文。取得できなかった（削除済みなど）場合は null */
   tweetContent: string | null;
-  isRead: boolean;
   /** 「○分」などの相対表記 */
   timestamp: string;
   createdAt: string;
