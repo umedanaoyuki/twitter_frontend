@@ -80,3 +80,12 @@ export type CreateCommentResponse =
 export type GetCommentsResponse =
   components["schemas"]["controllers.GetCommentsResponse"];
 export type ApiComment = components["schemas"]["controllers.SwaggerComment"];
+export type ApiNotification =
+  components["schemas"]["controllers.SwaggerNotification"];
+export type GetNotificationsResponse =
+  components["schemas"]["controllers.GetNotificationsResponse"];
+export type GetNotificationCountResponse =
+  components["schemas"]["controllers.GetNotificationCountResponse"];
+// バックエンドの DELETE /notifications は controllers.StatusOKResponse を返す
+export type DeleteAllNotificationsResponse =
+  components["schemas"]["controllers.StatusOKResponse"];

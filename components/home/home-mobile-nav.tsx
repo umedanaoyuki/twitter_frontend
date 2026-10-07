@@ -6,6 +6,8 @@ import { HiSearch } from "react-icons/hi";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
+import { NotificationBadge } from "@/components/home/notification-badge";
+import { getUnreadNotificationCount } from "@/lib/notifications/get-unread-notification-count";
 import { cn } from "@/lib/utils";
 
 type MobileNavItem = {
@@ -13,6 +15,8 @@ type MobileNavItem = {
   href: string;
   icon: ReactNode;
   active?: boolean;
+  /** 未読通知件数のバッジをアイコンに重ねるかどうか */
+  showNotificationBadge?: boolean;
 };
 
 const mobileNavItems: MobileNavItem[] = [
@@ -25,8 +29,9 @@ const mobileNavItems: MobileNavItem[] = [
   { label: "検索", href: "#", icon: <HiSearch className="size-[26px]" /> },
   {
     label: "通知",
-    href: "#",
+    href: "/notifications",
     icon: <IoNotificationsOutline className="size-[26px]" />,
+    showNotificationBadge: true,
   },
   {
     label: "メッセージ",
@@ -40,7 +45,10 @@ const mobileNavItems: MobileNavItem[] = [
   },
 ];
 
-function HomeMobileNav() {
+/** モバイル用の下部ナビ。未読通知件数はサーバー側で取得する */
+async function HomeMobileNav() {
+  const unreadNotificationCount = await getUnreadNotificationCount();
+
   return (
     <nav
       aria-label="モバイルメニュー"
@@ -57,8 +65,16 @@ function HomeMobileNav() {
               )}
               aria-current={item.active ? "page" : undefined}
             >
-              <span className={cn(!item.active && "text-[#71767b]")}>
+              <span
+                className={cn(
+                  "relative block",
+                  !item.active && "text-[#71767b]",
+                )}
+              >
                 {item.icon}
+                {item.showNotificationBadge && (
+                  <NotificationBadge count={unreadNotificationCount} />
+                )}
               </span>
               <span className="sr-only">{item.label}</span>
             </Link>

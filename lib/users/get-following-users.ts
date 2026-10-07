@@ -1,32 +1,9 @@
-import { getUserProfile } from "@/lib/api/profile";
 import { getUserFollowing } from "@/lib/api/users";
-import type { SwaggerUserProfile } from "@/lib/api/types";
 import { emailToDisplayName } from "@/lib/tweets/format";
 import type { FollowingListData, UserSummary } from "@/lib/types/user";
 import { getCurrentUserId } from "@/lib/users/get-current-user";
+import { getProfilesByIds } from "@/lib/users/get-profiles-by-ids";
 import { getUsersByIds } from "@/lib/users/get-user-detail";
-
-/**
- * 複数ユーザーのプロフィールをまとめて取得し、user_id をキーにしたMapで返す。
- * 一覧の表示名・アイコンに使うだけなので、未作成・取得失敗のユーザーはMapに含めない。
- */
-async function getProfilesByIds(
-  userIds: number[],
-): Promise<Map<number, SwaggerUserProfile>> {
-  const results = await Promise.allSettled(
-    userIds.map((userId) => getUserProfile(userId)),
-  );
-
-  const profilesById = new Map<number, SwaggerUserProfile>();
-  userIds.forEach((userId, index) => {
-    const result = results[index];
-    if (result?.status === "fulfilled" && result.value) {
-      profilesById.set(userId, result.value);
-    }
-  });
-
-  return profilesById;
-}
 
 /**
  * ログイン中のユーザーがフォローしているユーザー一覧を取得する。
