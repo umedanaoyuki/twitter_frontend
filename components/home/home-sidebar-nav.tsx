@@ -61,7 +61,7 @@ const navItems: NavItem[] = [
   {
     type: "link",
     label: "メッセージ",
-    href: "#",
+    href: "/messages",
     icon: <MdOutlineMailOutline className="size-[26px]" />,
   },
   {
@@ -122,8 +122,10 @@ function HomeSidebarNav({ unreadNotificationCount }: HomeSidebarNavProps) {
               );
             }
 
-            // "#" のダミーリンクは pathname と一致しないので自然に非アクティブになる
-            const isActive = pathname === item.href;
+            // 配下のページ（例: /messages/1）でも親メニューを強調する（"#" のダミーリンクは常に非アクティブ）
+            const isActive =
+              item.href !== "#" &&
+              (pathname === item.href || pathname.startsWith(`${item.href}/`));
 
             return (
               <Link

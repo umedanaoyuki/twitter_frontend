@@ -35,7 +35,7 @@ const mobileNavItems: MobileNavItem[] = [
   },
   {
     label: "メッセージ",
-    href: "#",
+    href: "/messages",
     icon: <MdOutlineMailOutline className="size-[26px]" />,
   },
   {

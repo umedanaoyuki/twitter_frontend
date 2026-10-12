@@ -89,3 +89,16 @@ export type GetNotificationCountResponse =
 // バックエンドの DELETE /notifications は controllers.StatusOKResponse を返す
 export type DeleteAllNotificationsResponse =
   components["schemas"]["controllers.StatusOKResponse"];
+export type ApiGroup = components["schemas"]["controllers.SwaggerGroup"];
+export type CreateGroupBody =
+  components["schemas"]["controllers.CreateGroupBody"];
+export type CreateGroupResponse =
+  components["schemas"]["controllers.CreateGroupResponse"];
+export type ApiMessage = components["schemas"]["controllers.SwaggerMessage"];
+export type GetMessagesResponse =
+  components["schemas"]["controllers.GetMessagesResponse"];
+export type CreateMessageInput =
+  components["schemas"]["controllers.CreateMessageInput"];
+export type CreateMessageResponse =
+  components["schemas"]["controllers.CreateMessageResponse"];
+export type ApiFollow = components["schemas"]["controllers.SwaggerFollow"];
